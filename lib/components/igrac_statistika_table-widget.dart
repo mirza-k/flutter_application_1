@@ -1,13 +1,10 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
-
 import '../models/tabele.dart';
 
-class LIgaTableWidget extends StatelessWidget {
+class IgracStatistikaTableWidget extends StatelessWidget {
   final List<LigaTabela> data;
 
-  const LIgaTableWidget({Key? key, required this.data}) : super(key: key);
+  const IgracStatistikaTableWidget({Key? key, required this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

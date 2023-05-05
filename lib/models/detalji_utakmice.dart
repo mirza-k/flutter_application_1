@@ -18,3 +18,12 @@ class DogadjajiUtakmiceVM {
 
   DogadjajiUtakmiceVM(this.fudbaler, this.minuta, this.dogadjajiUtakmiceEnum, this.klubEnum);
 }
+
+class StatistikaVM{
+  String posjed;
+  String sutevi;
+  String faulovi;
+  String ofsajdi;
+
+  StatistikaVM(this.posjed, this.sutevi, this.faulovi, this.ofsajdi);
+}

@@ -1,10 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/igrac_asistent_table.dart';
+import '../components/dropdown_button_widget.dart';
 import '../components/liga_table_widget.dart';
 import '../components/forma_table_widget.dart';
 import '../components/navigation_button.dart';
-
+import '../models/tabele.dart';
 
 class Lige extends StatefulWidget {
   const Lige({super.key});
@@ -16,12 +17,9 @@ class Lige extends StatefulWidget {
 class _LigeState extends State<Lige> {
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    Tabela(),
-    Strijelci(),
-    Asistenti(),
-    Forma()
-  ];
+  final List<Widget> _pages = [Tabela(), Strijelci(), Asistenti(), Forma()];
+
+  List<String> list = <String>['Premier Liga', 'Druga Liga'];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -47,7 +45,7 @@ class _LigeState extends State<Lige> {
                         style: TextStyle(
                             fontSize: 25.0, fontWeight: FontWeight.bold),
                       ),
-                      DropdownButtonExample()
+                      DropdownButtonExample(list: list)
                     ],
                   ),
                 ),
@@ -152,58 +150,18 @@ class Asistenti extends StatelessWidget {
 }
 
 class Forma extends StatelessWidget {
-
-    final List<FormaTabela> testData = [
-    FormaTabela(column1: '1', column2: 'Sarajevo', column3: ['P', 'I', 'N', 'P']),
+  final List<FormaTabela> testData = [
+    FormaTabela(
+        column1: '1', column2: 'Sarajevo', column3: ['P', 'I', 'N', 'P']),
     FormaTabela(column1: '2', column2: 'Zeljo', column3: ['N', 'I', 'P', 'I']),
     FormaTabela(column1: '3', column2: 'Velez', column3: ['I', 'P', 'N', 'N'])
   ];
 
   @override
   Widget build(BuildContext context) {
-     return Padding(
+    return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: FormaTabelaWidget(
-          data: testData),
-    );
-  }
-}
-
-class DropdownButtonExample extends StatefulWidget {
-  const DropdownButtonExample({super.key});
-
-  @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
-}
-
-const List<String> list = <String>['Premier Liga', 'Druga Liga'];
-
-class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  String dropdownValue = list.first;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<String>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.black, fontSize: 18.0),
-      underline: Container(
-        height: 2,
-        color: Colors.black,
-      ),
-      onChanged: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-        });
-      },
-      items: list.map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      }).toList(),
+      child: FormaTabelaWidget(data: testData),
     );
   }
 }
