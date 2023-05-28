@@ -17,26 +17,26 @@ class _IgraciState extends State<Igraci> {
   @override
   List<String> listaLiga = <String>['Premier Liga', 'Druga Liga'];
   List<String> listaFudbalera = <String>['Fudbaler1', 'Fudbaler2'];
-  List<LigaTabela> testData = [
-    LigaTabela(
-        column1: '1', column2: 'Zeljeznicar', column3: '12', column4: '28'),
-    LigaTabela(column1: '2', column2: 'Sarajevo', column3: '12', column4: '26'),
-    LigaTabela(column1: '3', column2: 'Mladost', column3: '12', column4: '25'),
-    LigaTabela(
-        column1: '4', column2: 'Rudar Kakanj', column3: '12', column4: '22'),
-    LigaTabela(column1: '5', column2: 'Velez', column3: '12', column4: '22'),
-    LigaTabela(column1: '5', column2: 'Velez', column3: '12', column4: '22'),
-    LigaTabela(column1: '5', column2: 'Velez', column3: '12', column4: '22'),
-    LigaTabela(column1: '5', column2: 'Velez', column3: '12', column4: '22'),
-    LigaTabela(column1: '5', column2: 'Velez', column3: '12', column4: '22'),
-    LigaTabela(column1: '5', column2: 'Velez', column3: '12', column4: '22')
+  List<FudbalerStatistikaTable> testData = [
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo', column2: '1', column3: '0', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '1', column3: '0', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '1', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '2', column3: '1', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '1', column3: '1', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0'),
+    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0')
   ];
 
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-          child: Column(children: [
-              Column(
+      child: Column(children: [
+        Column(
           children: [
             Center(
               child: Padding(
@@ -45,15 +45,15 @@ class _IgraciState extends State<Igraci> {
                   children: [
                     Text(
                       "Izaberite ligu",
-                      style:
-                          TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.bold),
                     ),
                     DropdownButtonExample(list: listaLiga),
                     Padding(padding: EdgeInsets.only(top: 20)),
                     Text(
                       "Izaberite fudbalera",
-                      style:
-                          TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 25.0, fontWeight: FontWeight.bold),
                     ),
                     DropdownButtonExample(list: listaFudbalera)
                   ],
@@ -61,8 +61,8 @@ class _IgraciState extends State<Igraci> {
               ),
             ),
           ],
-              ),
-              Padding(
+        ),
+        Padding(
           padding: const EdgeInsets.only(top: 30),
           child: Align(
             alignment: Alignment.centerLeft,
@@ -102,10 +102,10 @@ class _IgraciState extends State<Igraci> {
               ],
             ),
           ),
-              ),
-              Padding(padding: const EdgeInsets.only(top: 20)),
-              IgracStatistikaTableWidget(data: testData)
-            ]),
-        ));
+        ),
+        Padding(padding: const EdgeInsets.only(top: 20)),
+        IgracStatistikaTableWidget(data: testData)
+      ]),
+    ));
   }
 }
