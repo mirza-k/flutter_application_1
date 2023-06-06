@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/detalji_utakmice.dart';
 import 'package:flutter_application_1/pages/home.dart';
+import 'package:flutter_application_1/pages/igraci.dart';
 import 'package:flutter_application_1/pages/login.dart';
 import 'package:flutter_application_1/pages/register.dart';
 
@@ -18,8 +19,14 @@ class RouteGenerator {
       case '/home':
         return MaterialPageRoute(builder: (_) => Home());
       case '/detalji-utakmice':
-        if(args is int){
+        if (args is int) {
           return MaterialPageRoute(builder: (_) => DetaljiUtakmice(data: args));
+        }
+        return _errorRoute();
+      case '/historija-fudbalera':
+        if (args is int) {
+          return MaterialPageRoute(
+              builder: (_) => HistorijaFudbalera(fudbalerId: args));
         }
         return _errorRoute();
       default:

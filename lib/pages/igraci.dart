@@ -6,6 +6,23 @@ import 'package:flutter_application_1/components/igrac_statistika_table-widget.d
 import '../components/dropdown_button_widget.dart';
 import '../models/tabele.dart';
 
+class HistorijaFudbalera extends StatelessWidget {
+  int fudbalerId;
+  HistorijaFudbalera({super.key, required this.fudbalerId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Historija fudbalera"),
+      ),
+      body: Column(
+        children: [Text("Historija fudbalera")],
+      ),
+    );
+  }
+}
+
 class Igraci extends StatefulWidget {
   const Igraci({super.key});
 
@@ -19,17 +36,65 @@ class _IgraciState extends State<Igraci> {
   List<String> listaFudbalera = <String>['Fudbaler1', 'Fudbaler2'];
   List<FudbalerStatistikaTable> testData = [
     FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo', column2: '1', column3: '0', column4: '0', column5: '0'),
-    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '1', column3: '0', column4: '0', column5: '0'),
-    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '1', column4: '0', column5: '0'),
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '1',
+        column3: '0',
+        column4: '0',
+        column5: '0'),
     FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0'),
-    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '2', column3: '1', column4: '0', column5: '0'),
-    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '1', column3: '1', column4: '0', column5: '0'),
-    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0'),
-    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0'),
-    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0'),
-    FudbalerStatistikaTable(column1: 'Zeljo 3-2 Sarajevo', column2: '0', column3: '0', column4: '0', column5: '0')
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '1',
+        column3: '0',
+        column4: '0',
+        column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '0',
+        column3: '1',
+        column4: '0',
+        column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '0',
+        column3: '0',
+        column4: '0',
+        column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '2',
+        column3: '1',
+        column4: '0',
+        column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '1',
+        column3: '1',
+        column4: '0',
+        column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '0',
+        column3: '0',
+        column4: '0',
+        column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '0',
+        column3: '0',
+        column4: '0',
+        column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '0',
+        column3: '0',
+        column4: '0',
+        column5: '0'),
+    FudbalerStatistikaTable(
+        column1: 'Zeljo 3-2 Sarajevo',
+        column2: '0',
+        column3: '0',
+        column4: '0',
+        column5: '0')
   ];
 
   Widget build(BuildContext context) {
@@ -81,7 +146,23 @@ class _IgraciState extends State<Igraci> {
                         Text("Godina: 37"),
                         Text("Visina: 182"),
                         Text("Tezina: 85"),
-                        Text("Jača noga: Lijeva")
+                        Text("Jača noga: Lijeva"),
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).pushNamed(
+                                '/historija-fudbalera',
+                                arguments: 123);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10),
+                            child: Text(
+                              "Historija fudbalera",
+                              style: TextStyle(
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
