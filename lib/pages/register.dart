@@ -1,5 +1,8 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/request/register_request.dart';
+import 'package:flutter_application_1/providers/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -13,13 +16,60 @@ class _RegisterState extends State<Register> {
   TextEditingController passController = TextEditingController();
   TextEditingController imeController = TextEditingController();
   TextEditingController prezimeController = TextEditingController();
+  late AuthProvider _authProvider;
 
   final _formfield = GlobalKey<FormState>();
   bool passToggle = true;
 
-  void register(String email, String pass) {
-    print("Success Register");
-    Navigator.of(context).pushNamed('/login');
+  void register(String email, String pass, String ime, String prezime) async {
+    try {
+      _authProvider = context.read<AuthProvider>();
+      var register = RegisterRequest(
+          ime: ime,
+          prezime: prezime,
+          username: email,
+          password: pass,
+          datumRodjenja: DateTime.now());
+      var request = RegisterRequest().toJson(register);
+      var response = await _authProvider.register(request);
+      if (response) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: const Text("Registracija uspjesna!"),
+                  actions: [
+                    TextButton(
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/login'),
+                        child: const Text("OK"))
+                  ],
+                ));
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+                  title: Text("Error"),
+                  content: Text("Došlo je do greške! Molimo pokušajte ponovo."),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text("OK"))
+                  ],
+                ));
+      }
+    } catch (e) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: Text("Error"),
+                content: Text(e.toString()),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("OK"))
+                ],
+              ));
+    }
   }
 
   @override
@@ -42,13 +92,6 @@ class _RegisterState extends State<Register> {
               ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 30.0),
-                child: Center(
-                  child: Image.network(
-                    'https://w7.pngwing.com/pngs/150/705/png-transparent-football-player-sport-computer-icons-football-icon-sport-monochrome-sporting-goods.png',
-                    width: 50,
-                    height: 50,
-                  ),
-                ),
               ),
               TextFormField(
                 controller: imeController,
@@ -59,7 +102,8 @@ class _RegisterState extends State<Register> {
                     prefixIcon: Icon(Icons.email)),
                 validator: (value) {
                   if (value!.isEmpty) return "Unesite Vaše ime";
-                  if (imeController.text.length < 5) return "Ime mora biti duže od 5 slova";
+                  if (imeController.text.length < 5)
+                    return "Ime mora biti duže od 5 slova";
                 },
               ),
               SizedBox(height: 20),
@@ -72,7 +116,8 @@ class _RegisterState extends State<Register> {
                     prefixIcon: Icon(Icons.email)),
                 validator: (value) {
                   if (value!.isEmpty) return "Unesite Vaše prezime";
-                  if (prezimeController.text.length < 5) return "Prezime mora biti duže od 5 slova";
+                  if (prezimeController.text.length < 5)
+                    return "Prezime mora biti duže od 5 slova";
                 },
               ),
               SizedBox(height: 20),
@@ -125,7 +170,8 @@ class _RegisterState extends State<Register> {
               InkWell(
                 onTap: () {
                   if (_formfield.currentState!.validate()) {
-                    register(emailController.text, emailController.text);
+                    register(emailController.text, emailController.text,
+                        imeController.text, prezimeController.text);
                   }
                 },
                 child: Container(
@@ -143,13 +189,22 @@ class _RegisterState extends State<Register> {
                   ),
                 ),
               ),
-               Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Već imaš akaunt?", style: TextStyle(fontSize: 16),),
-                  TextButton(onPressed: (){
-                    Navigator.of(context).pushNamed('/login');
-                  }, child: Text("Uloguj se", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),))
+                  Text(
+                    "Već imaš akaunt?",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/login');
+                      },
+                      child: Text(
+                        "Uloguj se",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ))
                 ],
               ),
             ],

@@ -36,16 +36,7 @@ class _LoginState extends State<Login> {
                   style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 30.0),
-                child: Center(
-                  child: Image.network(
-                    'https://w7.pngwing.com/pngs/150/705/png-transparent-football-player-sport-computer-icons-football-icon-sport-monochrome-sporting-goods.png',
-                    width: 50,
-                    height: 50,
-                  ),
-                ),
-              ),
+              Padding(padding: const EdgeInsets.only(top: 30)),
               TextFormField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
