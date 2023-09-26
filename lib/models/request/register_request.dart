@@ -4,10 +4,6 @@ class RegisterRequest {
   String? ime;
   String? prezime;
   DateTime? datumRodjenja;
-  // int? gradId;
-  // int? ulogaId;
-  // bool? isPremium;
-  // int? korisnickiRacunId;
 
   RegisterRequest(
       {this.ime, this.prezime, this.username, this.password, this.datumRodjenja});

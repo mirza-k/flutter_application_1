@@ -1,5 +1,9 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/request/login_request.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth_provider.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -13,10 +17,28 @@ class _LoginState extends State<Login> {
   TextEditingController passController = TextEditingController();
   final _formfield = GlobalKey<FormState>();
   bool passToggle = true;
+  late AuthProvider _authProvider;
 
-  void login(String email, String pass) {
-    print("Success login");
-    Navigator.of(context).pushNamed('/home');
+  void login(String email, String pass) async {
+    _authProvider = context.read<AuthProvider>();
+    var login = LoginRequest(username: email, password: pass);
+    var request = LoginRequest().toJson(login);
+    var result = await _authProvider.login(request);
+    if (result > 0) {
+      Navigator.of(context).pushNamed('/home');
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: Text("Error"),
+                content: Text("Neispravan username ili password."),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("OK"))
+                ],
+              ));
+    }
   }
 
   @override
@@ -86,7 +108,7 @@ class _LoginState extends State<Login> {
               InkWell(
                 onTap: () {
                   if (_formfield.currentState!.validate()) {
-                    login(emailController.text, emailController.text);
+                    login(emailController.text, passController.text);
                   }
                 },
                 child: Container(

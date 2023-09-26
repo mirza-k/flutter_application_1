@@ -170,7 +170,7 @@ class _RegisterState extends State<Register> {
               InkWell(
                 onTap: () {
                   if (_formfield.currentState!.validate()) {
-                    register(emailController.text, emailController.text,
+                    register(emailController.text, passController.text,
                         imeController.text, prezimeController.text);
                   }
                 },
