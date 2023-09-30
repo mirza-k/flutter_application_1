@@ -1,54 +1,127 @@
 // ignore_for_file: prefer_const_constructors, must_be_immutable, prefer_const_literals_to_create_immutables, curly_braces_in_flow_control_structures, prefer_final_fields
+import 'dart:convert';
 import 'dart:math';
-
+import 'dart:typed_data';
 import 'package:flutter_application_1/enums/dogadjaji_utakmice_enum.dart';
 import 'package:flutter_application_1/enums/klub_enum.dart';
 import 'package:flutter_application_1/models/detalji_utakmice.dart';
 import 'package:flutter_application_1/models/postave.dart';
+import 'package:flutter_application_1/models/response/match_details_response.dart';
+import 'package:provider/provider.dart';
 import '../components/liga_table_widget.dart';
 import '../components/navigation_button.dart';
 import 'package:flutter/material.dart';
-
 import '../models/tabele.dart';
+import '../providers/match_provider.dart';
 
 class DetaljiUtakmice extends StatefulWidget {
-  int data;
-  DetaljiUtakmice({super.key, required this.data});
+  int matchId;
+  DetaljiUtakmice({super.key, required this.matchId});
 
   @override
   State<DetaljiUtakmice> createState() => _DetaljiUtakmiceState();
 }
 
 class _DetaljiUtakmiceState extends State<DetaljiUtakmice> {
-  late List<StatelessWidget> _pages = [
-    DetaljiUtakmiceWidget(dogadjajiUtakmiceVM: dogadjajiUtakmiceVMs),
-    PostaveWidget(postave: postave),
-    StatistikaWidget(
-      detalji: detalji,
-    ),
-    TabelaWidget()
-  ];
+  late List<DogadjajiUtakmiceVM> dogadjajiUtakmiceVMs = [];
+  late var detalji = null;
+  late List<StatefulWidget> _pages = [];
   int _selectedIndex = 0;
+  MatchDetailsResponse? matchDetailsResponse;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  late var detalji =
-      DetaljiUtakmiceVM("Sarajevo", "Zeljeznicar", "2-3", dogadjajiUtakmiceVMs);
-  final List<DogadjajiUtakmiceVM> dogadjajiUtakmiceVMs = [
-    DogadjajiUtakmiceVM(
-        "Hodzic", "12", DogadjajiUtakmiceEnum.gol, KlubEnum.domaci),
-    DogadjajiUtakmiceVM(
-        "Handzic", "35", DogadjajiUtakmiceEnum.gol, KlubEnum.gost),
-    DogadjajiUtakmiceVM(
-        "Krpic", "67", DogadjajiUtakmiceEnum.gol, KlubEnum.domaci),
-    DogadjajiUtakmiceVM(
-        "Cocalic", "77", DogadjajiUtakmiceEnum.zutiKarton, KlubEnum.domaci),
-    DogadjajiUtakmiceVM(
-        "Serbecic", "89", DogadjajiUtakmiceEnum.crveniKarton, KlubEnum.gost),
-  ];
+  Future<void> _fetchDetails() async {
+    var matchProvider = context.read<MatchProvider>();
+    var response = await matchProvider.getDetails(widget.matchId);
+    setState(() {
+      matchDetailsResponse = response;
+      dogadjajiUtakmiceVMs = arrangeData();
+      detalji = DetaljiUtakmiceVM(
+        matchDetailsResponse!.gosti ?? "",
+        matchDetailsResponse!.domaci ?? "",
+        matchDetailsResponse!.rezultat,
+        dogadjajiUtakmiceVMs,
+        Uint8List.fromList(
+            base64.decode(matchDetailsResponse!.domaciSlika ?? "")),
+        Uint8List.fromList(
+            base64.decode(matchDetailsResponse!.gostiSlika ?? "")),
+      );
+      _pages = [
+        DetaljiUtakmiceWidget(dogadjajiUtakmiceVM: dogadjajiUtakmiceVMs),
+        PostaveWidget(postave: postave),
+        StatistikaWidget(
+          detalji: detalji,
+        ),
+        TabelaWidget()
+      ];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchDetails();
+  }
+
+  List<DogadjajiUtakmiceVM> arrangeData() {
+    var data = matchDetailsResponse;
+    List<DogadjajiUtakmiceVM> dogadjaji = [];
+    var golDetails = data!.golDetails;
+    if (golDetails != null) {
+      for (int i = 0; i < golDetails.length; i++) {
+        dogadjaji.add(DogadjajiUtakmiceVM(
+            golDetails[i].imeFudbalera ?? "",
+            golDetails[i].minutaGola.toString(),
+            DogadjajiUtakmiceEnum.gol,
+            golDetails[i].domacin != null && golDetails[i].domacin == true
+                ? KlubEnum.domaci
+                : KlubEnum.gost));
+      }
+    }
+
+    var zutiKartonDetails = data.zutiKartonDetails;
+    if (zutiKartonDetails != null) {
+      for (int i = 0; i < zutiKartonDetails.length; i++) {
+        dogadjaji.add(DogadjajiUtakmiceVM(
+            zutiKartonDetails[i].imeFudbalera ?? "",
+            zutiKartonDetails[i].minutaKartona.toString(),
+            DogadjajiUtakmiceEnum.zutiKarton,
+            zutiKartonDetails[i].domacin != null &&
+                    zutiKartonDetails[i].domacin == true
+                ? KlubEnum.domaci
+                : KlubEnum.gost));
+      }
+    }
+
+    var crveniKartonDetails = data.crveniKartonDetails;
+    if (crveniKartonDetails != null) {
+      for (int i = 0; i < crveniKartonDetails.length; i++) {
+        dogadjaji.add(DogadjajiUtakmiceVM(
+            crveniKartonDetails[i].imeFudbalera ?? "",
+            crveniKartonDetails[i].minutaKartona.toString(),
+            DogadjajiUtakmiceEnum.crveniKarton,
+            crveniKartonDetails[i].domacin != null &&
+                    crveniKartonDetails[i].domacin == true
+                ? KlubEnum.domaci
+                : KlubEnum.gost));
+      }
+    }
+
+    int compareByMinuta(DogadjajiUtakmiceVM a, DogadjajiUtakmiceVM b) {
+      final minutaA = int.tryParse(a.minuta) ?? 0;
+      final minutaB = int.tryParse(b.minuta) ?? 0;
+
+      return minutaA.compareTo(minutaB);
+    }
+
+    dogadjaji.sort(compareByMinuta);
+
+    return dogadjaji;
+  }
 
   var postave = Postave([
     "Igrac1",
@@ -87,44 +160,52 @@ class _DetaljiUtakmiceState extends State<DetaljiUtakmice> {
         child: Column(
           children: [
             Row(children: [
-              Flexible(
+              if (detalji != null)
+                Flexible(
+                    flex: 3,
+                    fit: FlexFit.tight,
+                    child: Column(
+                      children: [
+                        if (detalji.domaciSlika != null)
+                          Image.memory(
+                            detalji.domaciSlika ??
+                                Uint8List.fromList([10, 20, 30]),
+                            width: 150,
+                            height: 150,
+                          ),
+                        Text(detalji.domaci ?? "",
+                            style: TextStyle(fontSize: 20))
+                      ],
+                    )),
+              if (detalji != null)
+                Flexible(
+                    flex: 1,
+                    fit: FlexFit.tight,
+                    child: Column(
+                      children: [
+                        Text(
+                          detalji.rezultat ?? "",
+                          style: TextStyle(fontSize: 25),
+                        ),
+                      ],
+                    )),
+              if (detalji != null)
+                Flexible(
                   flex: 3,
                   fit: FlexFit.tight,
                   child: Column(
                     children: [
-                      Image.network(
-                        "https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Zeljeznicar_logo.svg/1200px-Zeljeznicar_logo.svg.png",
-                        width: 150,
-                        height: 150,
-                      ),
-                      Text(detalji.domaci, style: TextStyle(fontSize: 20))
+                      if (detalji.gostiSlika != null)
+                        Image.memory(
+                          detalji.gostiSlika ??
+                              Uint8List.fromList([10, 20, 30]),
+                          width: 150,
+                          height: 150,
+                        ),
+                      Text(detalji.gosti ?? "", style: TextStyle(fontSize: 20))
                     ],
-                  )),
-              Flexible(
-                  flex: 1,
-                  fit: FlexFit.tight,
-                  child: Column(
-                    children: [
-                      Text(
-                        detalji.rezultat,
-                        style: TextStyle(fontSize: 25),
-                      ),
-                    ],
-                  )),
-              Flexible(
-                flex: 3,
-                fit: FlexFit.tight,
-                child: Column(
-                  children: [
-                    Image.network(
-                      "https://fksweb.fra1.digitaloceanspaces.com/6914/conversions/fc212d10f81a19dd3eca5abe6dc0aeb5-small.jpg",
-                      width: 150,
-                      height: 150,
-                    ),
-                    Text(detalji.gosti, style: TextStyle(fontSize: 20))
-                  ],
+                  ),
                 ),
-              ),
             ]),
             Padding(
               padding: const EdgeInsets.only(top: 50.0),
@@ -154,9 +235,10 @@ class _DetaljiUtakmiceState extends State<DetaljiUtakmice> {
                 ],
               ),
             ),
-            Column(
-              children: [_pages[_selectedIndex]],
-            )
+            if (_pages.isNotEmpty)
+              Column(
+                children: [_pages[_selectedIndex]],
+              )
           ],
         ),
       ),
@@ -164,28 +246,38 @@ class _DetaljiUtakmiceState extends State<DetaljiUtakmice> {
   }
 }
 
-class DetaljiUtakmiceWidget extends StatelessWidget {
+class DetaljiUtakmiceWidget extends StatefulWidget {
   List<DogadjajiUtakmiceVM> dogadjajiUtakmiceVM;
   DetaljiUtakmiceWidget({super.key, required this.dogadjajiUtakmiceVM});
 
   @override
+  State<DetaljiUtakmiceWidget> createState() => _DetaljiUtakmiceWidgetState();
+}
+
+class _DetaljiUtakmiceWidgetState extends State<DetaljiUtakmiceWidget> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ...dogadjajiUtakmiceVM
+        ...widget.dogadjajiUtakmiceVM
             .map((e) => DogadjajUtakmiceWidget(dogadjajiUtakmiceVM: e))
       ],
     );
   }
 }
 
-class StatistikaWidget extends StatelessWidget {
-  DetaljiUtakmiceVM detalji;
+class StatistikaWidget extends StatefulWidget {
+  DetaljiUtakmiceVM? detalji;
   StatistikaWidget({super.key, required this.detalji});
 
   @override
+  State<StatistikaWidget> createState() => _StatistikaWidgetState();
+}
+
+class _StatistikaWidgetState extends State<StatistikaWidget> {
+  @override
   Widget build(BuildContext context) {
-    StatistikaVM GenerisiStatistiku(DetaljiUtakmiceVM detaljiUtakmiceVM) {
+    StatistikaVM GenerisiStatistiku(DetaljiUtakmiceVM? detaljiUtakmiceVM) {
       Random random = Random();
       int domaciSutevi = random.nextInt(5) + 5;
       int gostiSutevi = random.nextInt(5) + 5;
@@ -205,7 +297,7 @@ class StatistikaWidget extends StatelessWidget {
       return StatistikaVM(stvarniPosjed, sutevi, faulovi, ofsajdi);
     }
 
-    StatistikaVM statistika = GenerisiStatistiku(detalji);
+    StatistikaVM statistika = GenerisiStatistiku(widget.detalji);
 
     return Container(
         child: Column(
@@ -260,20 +352,26 @@ class StatistikaWidget extends StatelessWidget {
   }
 }
 
-class PostaveWidget extends StatelessWidget {
+class PostaveWidget extends StatefulWidget {
   Postave postave;
   PostaveWidget({super.key, required this.postave});
 
+  @override
+  State<PostaveWidget> createState() => _PostaveWidgetState();
+}
+
+class _PostaveWidgetState extends State<PostaveWidget> {
   @override
   Widget build(BuildContext context) {
     const space = "                            ";
     return Column(
       children: [
-        Text("${postave.domaciIme}$space${postave.gostiIme}"),
+        Text("${widget.postave.domaciIme}$space${widget.postave.gostiIme}"),
         for (int x = 0; x < 11; x++) ...[
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Text("${postave.domaci[x]}$space${postave.gosti[x]}"),
+            child: Text(
+                "${widget.postave.domaci[x]}$space${widget.postave.gosti[x]}"),
           ),
         ],
       ],
@@ -281,8 +379,14 @@ class PostaveWidget extends StatelessWidget {
   }
 }
 
-class TabelaWidget extends StatelessWidget {
+class TabelaWidget extends StatefulWidget {
   TabelaWidget({super.key});
+
+  @override
+  State<TabelaWidget> createState() => _TabelaWidgetState();
+}
+
+class _TabelaWidgetState extends State<TabelaWidget> {
   final List<LigaTabela> testData = [
     LigaTabela(
         column1: '1', column2: 'Zeljeznicar', column3: '12', column4: '28'),
@@ -292,6 +396,7 @@ class TabelaWidget extends StatelessWidget {
         column1: '4', column2: 'Rudar Kakanj', column3: '12', column4: '22'),
     LigaTabela(column1: '5', column2: 'Velez', column3: '12', column4: '22'),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Padding(

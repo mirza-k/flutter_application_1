@@ -20,7 +20,7 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Home());
       case '/detalji-utakmice':
         if (args is int) {
-          return MaterialPageRoute(builder: (_) => DetaljiUtakmice(data: args));
+          return MaterialPageRoute(builder: (_) => DetaljiUtakmice(matchId: args));
         }
         return _errorRoute();
       case '/historija-fudbalera':

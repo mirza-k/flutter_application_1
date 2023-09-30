@@ -1,7 +1,9 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, prefer_const_constructors_in_immutables, prefer_typing_uninitialized_variables
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/detalji_utakmice.dart';
+import 'package:flutter_application_1/models/response/utakmica_response.dart';
+import 'package:flutter_application_1/providers/match_provider.dart';
+import 'package:provider/provider.dart';
+import '../models/response/liga_response.dart';
+import '../providers/liga_provider.dart';
 
 class Utakmice extends StatefulWidget {
   const Utakmice({super.key});
@@ -10,32 +12,51 @@ class Utakmice extends StatefulWidget {
   State<Utakmice> createState() => _UtakmiceState();
 }
 
-class Utakmica {
-  final String Domacin;
-  final String Gost;
-  final String Rezultat;
-
-  const Utakmica({
-    required this.Domacin,
-    required this.Gost,
-    required this.Rezultat,
-  });
-}
-
 class _UtakmiceState extends State<Utakmice> {
-  // int _selectedIndex = 0;
-  int? koloValue = 0;
-  List<Utakmica> utakmice = [
-    Utakmica(Domacin: "Sarajevo", Gost: "Zeljo", Rezultat: "2-2"),
-    Utakmica(Domacin: "Sarajevo", Gost: "Zeljo", Rezultat: "2-2"),
-    Utakmica(Domacin: "Sarajevo", Gost: "Zeljo", Rezultat: "2-2"),
-    Utakmica(Domacin: "Sarajevo", Gost: "Zeljo", Rezultat: "2-2"),
-    Utakmica(Domacin: "Sarajevo", Gost: "Zeljo", Rezultat: "2-2")
-  ];
+  int? koloValue;
+  LigaResponse? ligaValue;
+  List<int> koloResults = [];
+  List<LigaResponse> ligaResults = [];
+  List<UtakmiceResponse> utakmice = [];
 
-  // late final List<Widget> _pages = [
-  //   PreviewUtakmice(utakmice: utakmice)
-  // ];
+  Future<void> _fetchLige() async {
+    var _ligaProvider = context.read<LigaProvider>();
+    var result = await _ligaProvider.get();
+    setState(() {
+      ligaResults = result.result;
+    });
+  }
+
+  Future<void> _fetchBrojKola() async {
+    koloValue = null;
+    var matchProvider = context.read<MatchProvider>();
+    if (ligaValue != null) {
+      var ligaId = ligaValue!.ligaId1;
+      var maxBrojKola = await matchProvider.GetMaxBrojKola(ligaId ?? 0);
+      List<int> kola = [];
+      for (int i = 1; i <= maxBrojKola; i++) {
+        kola.add(i);
+      }
+      setState(() {
+        koloResults = kola;
+      });
+    }
+  }
+
+  Future<void> _fetchMatchevi() async {
+    var matchProvider = context.read<MatchProvider>();
+    var response = await matchProvider.get(ligaValue!.ligaId1, koloValue);
+    setState(() {
+      utakmice = response.result;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLige();
+    _fetchBrojKola();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,16 +71,87 @@ class _UtakmiceState extends State<Utakmice> {
               child: Column(
                 children: [
                   Text(
-                    "Odaberi kolo: $koloValue",
+                    "Odaberi ligu",
                     style:
-                        TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
-                  DropdownButtonExample(
-                    onChanged: (int? value) {
-                      setState(() {
-                        koloValue = value;
-                      });
-                    },
+                  Container(
+                    width: 300,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 2,
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: DropdownButton<LigaResponse>(
+                      isExpanded: true,
+                      value: ligaValue,
+                      onChanged: (val) {
+                        setState(() => ligaValue = val!);
+                        _fetchBrojKola();
+                      },
+                      items: ligaResults
+                          .map((val) => DropdownMenuItem(
+                              value: val, child: Text(val.naziv ?? "")))
+                          .toList(),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
+                      underline: SizedBox(),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 15.0)),
+                  Text(
+                    "Odaberi kolo",
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  Container(
+                    width: 300,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 2,
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: DropdownButton<int>(
+                      isExpanded: true,
+                      value: koloValue,
+                      onChanged: (val) async {
+                        setState(() => koloValue = val!);
+                        _fetchMatchevi();
+                      },
+                      items: koloResults
+                          .map((val) => DropdownMenuItem(
+                              value: val, child: Text(val.toString())))
+                          .toList(),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: Colors.grey,
+                        size: 24,
+                      ),
+                      underline: SizedBox(),
+                    ),
                   ),
                   Column(
                     mainAxisSize: MainAxisSize.max,
@@ -74,14 +166,14 @@ class _UtakmiceState extends State<Utakmice> {
                             child: Center(
                               child: Text(
                                 "Premier Liga",
-                                style: TextStyle(color: Colors.white, fontSize: 20),
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
                             ),
                           ),
                         ),
                       ),
                       PreviewUtakmice(utakmice: utakmice)
-                      // DetaljiUtakmice()
                     ],
                   )
                 ],
@@ -95,7 +187,7 @@ class _UtakmiceState extends State<Utakmice> {
 }
 
 class PreviewUtakmice extends StatelessWidget {
-  List<Utakmica> utakmice;
+  List<UtakmiceResponse> utakmice;
   PreviewUtakmice({super.key, required this.utakmice});
 
   @override
@@ -110,17 +202,30 @@ class PreviewUtakmice extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 10.0),
                   child: Center(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Text("${item.Domacin}  ${item.Rezultat}  ${item.Gost}", style: TextStyle(fontSize: 18),),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).pushNamed('/detalji-utakmice', arguments: 123);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10),
-                            child: Text("detalji", style: TextStyle(color: Colors.blue,),)
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              item.prikaz.toString(),
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.of(context).pushNamed(
+                                    '/detalji-utakmice',
+                                    arguments: item.matchId);
+                              },
+                              child: Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Text(
+                                    "detalji",
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                    ),
+                                  )),
+                            )
+                          ],
                         )
                       ],
                     ),
@@ -131,46 +236,6 @@ class PreviewUtakmice extends StatelessWidget {
           );
         })
       ]),
-    );
-  }
-}
-
-class DropdownButtonExample extends StatefulWidget {
-  final Function(int?)? onChanged;
-  DropdownButtonExample({super.key, required this.onChanged});
-
-  @override
-  State<DropdownButtonExample> createState() => _DropdownButtonExampleState();
-}
-
-const List<int> list = <int>[1, 2, 3, 4, 5];
-
-class _DropdownButtonExampleState extends State<DropdownButtonExample> {
-  int dropdownValue = list.first;
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButton<int>(
-      value: dropdownValue,
-      icon: const Icon(Icons.arrow_downward),
-      elevation: 16,
-      style: const TextStyle(color: Colors.black, fontSize: 18.0),
-      underline: Container(
-        height: 2,
-        color: Colors.black,
-      ),
-      onChanged: (value) {
-        setState(() {
-          dropdownValue = value!;
-          widget.onChanged!(value);
-        });
-      },
-      items: list.map<DropdownMenuItem<int>>((int value) {
-        return DropdownMenuItem<int>(
-          value: value,
-          child: Text(value.toString()),
-        );
-      }).toList(),
     );
   }
 }

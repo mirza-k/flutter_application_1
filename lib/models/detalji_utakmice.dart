@@ -1,13 +1,18 @@
+import 'dart:typed_data';
+
 import 'package:flutter_application_1/enums/dogadjaji_utakmice_enum.dart';
 import 'package:flutter_application_1/enums/klub_enum.dart';
 
 class DetaljiUtakmiceVM {
-  String gosti;
-  String domaci;
-  String rezultat;
-  List<DogadjajiUtakmiceVM> dogadjajiUtakmiceVM;
+  String? gosti;
+  String? domaci;
+  String? rezultat;
+  Uint8List ? domaciSlika;
+  Uint8List ? gostiSlika;
+  List<DogadjajiUtakmiceVM>? dogadjajiUtakmiceVM;
 
-  DetaljiUtakmiceVM(this.gosti, this.domaci, this.rezultat, this.dogadjajiUtakmiceVM);
+  DetaljiUtakmiceVM(this.gosti, this.domaci, this.rezultat,
+      this.dogadjajiUtakmiceVM, this.domaciSlika, this.gostiSlika);
 }
 
 class DogadjajiUtakmiceVM {
@@ -16,10 +21,11 @@ class DogadjajiUtakmiceVM {
   DogadjajiUtakmiceEnum dogadjajiUtakmiceEnum;
   KlubEnum klubEnum;
 
-  DogadjajiUtakmiceVM(this.fudbaler, this.minuta, this.dogadjajiUtakmiceEnum, this.klubEnum);
+  DogadjajiUtakmiceVM(
+      this.fudbaler, this.minuta, this.dogadjajiUtakmiceEnum, this.klubEnum);
 }
 
-class StatistikaVM{
+class StatistikaVM {
   String posjed;
   String sutevi;
   String faulovi;
