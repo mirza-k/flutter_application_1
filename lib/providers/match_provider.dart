@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/response/match_details_response.dart';
+import 'package:flutter_application_1/models/response/tabela_response.dart';
 import 'package:http/http.dart' as http;
 
 import '../models/response/utakmica_response.dart';
@@ -58,6 +59,23 @@ class MatchProvider with ChangeNotifier {
       var data = jsonDecode(response.body);
       var result = MatchDetailsResponse();
       result = MatchDetailsResponse.fromJson(data);
+      return result;
+    } else {
+      throw new Exception("Unexpected error");
+    }
+  }
+
+  Future<SearchResult<TabelaResponse>> getTabela(int? ligaId) async {
+    var url = "$_baseUrl$endpoint/Tabela/$ligaId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      var result = SearchResult<TabelaResponse>();
+      for (var item in data) {
+        result.result.add(TabelaResponse.fromJson(item));
+      }
       return result;
     } else {
       throw new Exception("Unexpected error");

@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/detalji_utakmice.dart';
 import 'package:flutter_application_1/pages/home.dart';
@@ -19,8 +18,8 @@ class RouteGenerator {
       case '/home':
         return MaterialPageRoute(builder: (_) => Home());
       case '/detalji-utakmice':
-        if (args is int) {
-          return MaterialPageRoute(builder: (_) => DetaljiUtakmice(matchId: args));
+        if (args is List<int>) {
+          return MaterialPageRoute(builder: (_) => DetaljiUtakmice(args: args));
         }
         return _errorRoute();
       case '/historija-fudbalera':

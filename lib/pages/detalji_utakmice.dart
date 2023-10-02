@@ -11,12 +11,14 @@ import 'package:provider/provider.dart';
 import '../components/liga_table_widget.dart';
 import '../components/navigation_button.dart';
 import 'package:flutter/material.dart';
+import '../models/response/tabela_response.dart';
+import '../models/search_results.dart';
 import '../models/tabele.dart';
 import '../providers/match_provider.dart';
 
 class DetaljiUtakmice extends StatefulWidget {
-  int matchId;
-  DetaljiUtakmice({super.key, required this.matchId});
+  List<int> args = [];
+  DetaljiUtakmice({super.key, required this.args});
 
   @override
   State<DetaljiUtakmice> createState() => _DetaljiUtakmiceState();
@@ -34,9 +36,31 @@ class _DetaljiUtakmiceState extends State<DetaljiUtakmice> {
     });
   }
 
+  StatistikaVM GenerisiStatistiku(DetaljiUtakmiceVM? detaljiUtakmiceVM) {
+    Random random = Random();
+    int domaciSutevi = random.nextInt(5) + 5;
+    int gostiSutevi = random.nextInt(5) + 5;
+    String sutevi = "$domaciSutevi - $gostiSutevi";
+
+    List<String> posjed = ["50%-50%", "40%-60%", "60%-40%"];
+    String stvarniPosjed = posjed[random.nextInt(posjed.length)];
+
+    int domaciFaulovi = random.nextInt(8) + 5;
+    int gostiFaulovi = random.nextInt(8) + 5;
+    String faulovi = "$domaciFaulovi - $gostiFaulovi";
+
+    int domaciOfsajdi = random.nextInt(1) + 5;
+    int gostiOfsajdi = random.nextInt(1) + 5;
+    String ofsajdi = "$domaciOfsajdi - $gostiOfsajdi";
+
+    return StatistikaVM(stvarniPosjed, sutevi, faulovi, ofsajdi);
+  }
+
   Future<void> _fetchDetails() async {
     var matchProvider = context.read<MatchProvider>();
-    var response = await matchProvider.getDetails(widget.matchId);
+    var response = await matchProvider.getDetails(widget.args[0]); //matchId
+    var tabela = await matchProvider.getTabela(widget.args[1]); //ligaId
+    var statistika = GenerisiStatistiku(detalji);
     setState(() {
       matchDetailsResponse = response;
       dogadjajiUtakmiceVMs = arrangeData();
@@ -50,13 +74,20 @@ class _DetaljiUtakmiceState extends State<DetaljiUtakmice> {
         Uint8List.fromList(
             base64.decode(matchDetailsResponse!.gostiSlika ?? "")),
       );
+      var postave = Postave(
+          matchDetailsResponse!.postaveDomaci ?? [],
+          matchDetailsResponse!.postaveGosti ?? [],
+          matchDetailsResponse!.domaci ?? "",
+          matchDetailsResponse!.gosti ?? "");
       _pages = [
         DetaljiUtakmiceWidget(dogadjajiUtakmiceVM: dogadjajiUtakmiceVMs),
         PostaveWidget(postave: postave),
         StatistikaWidget(
-          detalji: detalji,
+          statistika: statistika,
         ),
-        TabelaWidget()
+        TabelaWidget(
+          tabelaResponse: tabela,
+        )
       ];
     });
   }
@@ -114,40 +145,12 @@ class _DetaljiUtakmiceState extends State<DetaljiUtakmice> {
     int compareByMinuta(DogadjajiUtakmiceVM a, DogadjajiUtakmiceVM b) {
       final minutaA = int.tryParse(a.minuta) ?? 0;
       final minutaB = int.tryParse(b.minuta) ?? 0;
-
       return minutaA.compareTo(minutaB);
     }
 
     dogadjaji.sort(compareByMinuta);
-
     return dogadjaji;
   }
-
-  var postave = Postave([
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-  ], [
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-    "Igrac1",
-  ], "Zeljeznicar", "Sarajevo");
 
   @override
   Widget build(BuildContext context) {
@@ -267,8 +270,8 @@ class _DetaljiUtakmiceWidgetState extends State<DetaljiUtakmiceWidget> {
 }
 
 class StatistikaWidget extends StatefulWidget {
-  DetaljiUtakmiceVM? detalji;
-  StatistikaWidget({super.key, required this.detalji});
+  StatistikaVM? statistika;
+  StatistikaWidget({super.key, required this.statistika});
 
   @override
   State<StatistikaWidget> createState() => _StatistikaWidgetState();
@@ -277,28 +280,6 @@ class StatistikaWidget extends StatefulWidget {
 class _StatistikaWidgetState extends State<StatistikaWidget> {
   @override
   Widget build(BuildContext context) {
-    StatistikaVM GenerisiStatistiku(DetaljiUtakmiceVM? detaljiUtakmiceVM) {
-      Random random = Random();
-      int domaciSutevi = random.nextInt(5) + 5;
-      int gostiSutevi = random.nextInt(5) + 5;
-      String sutevi = "$domaciSutevi - $gostiSutevi";
-
-      List<String> posjed = ["50%-50%", "40%-60%", "60%-40%"];
-      String stvarniPosjed = posjed[random.nextInt(posjed.length)];
-
-      int domaciFaulovi = random.nextInt(8) + 5;
-      int gostiFaulovi = random.nextInt(8) + 5;
-      String faulovi = "$domaciFaulovi - $gostiFaulovi";
-
-      int domaciOfsajdi = random.nextInt(1) + 5;
-      int gostiOfsajdi = random.nextInt(1) + 5;
-      String ofsajdi = "$domaciOfsajdi - $gostiOfsajdi";
-
-      return StatistikaVM(stvarniPosjed, sutevi, faulovi, ofsajdi);
-    }
-
-    StatistikaVM statistika = GenerisiStatistiku(widget.detalji);
-
     return Container(
         child: Column(
       children: [
@@ -309,7 +290,7 @@ class _StatistikaWidgetState extends State<StatistikaWidget> {
         )),
         Padding(
           padding: const EdgeInsets.only(top: 5),
-          child: Center(child: Text(statistika.posjed)),
+          child: Center(child: Text(widget.statistika!.posjed)),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -321,7 +302,7 @@ class _StatistikaWidgetState extends State<StatistikaWidget> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 5),
-          child: Center(child: Text(statistika.sutevi)),
+          child: Center(child: Text(widget.statistika!.sutevi)),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -333,7 +314,7 @@ class _StatistikaWidgetState extends State<StatistikaWidget> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 5),
-          child: Center(child: Text(statistika.faulovi)),
+          child: Center(child: Text(widget.statistika!.faulovi)),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -345,7 +326,7 @@ class _StatistikaWidgetState extends State<StatistikaWidget> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 6),
-          child: Center(child: Text(statistika.ofsajdi)),
+          child: Center(child: Text(widget.statistika!.ofsajdi)),
         )
       ],
     ));
@@ -363,46 +344,81 @@ class PostaveWidget extends StatefulWidget {
 class _PostaveWidgetState extends State<PostaveWidget> {
   @override
   Widget build(BuildContext context) {
-    const space = "                            ";
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("${widget.postave.domaciIme}$space${widget.postave.gostiIme}"),
-        for (int x = 0; x < 11; x++) ...[
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-                "${widget.postave.domaci[x]}$space${widget.postave.gosti[x]}"),
+        Padding(
+          padding: const EdgeInsets.only(
+              right: 16.0), // Adjust the right padding as needed
+          child: Column(
+            children: [
+              Text(
+                "${widget.postave.domaciIme}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              for (int x = 0; x < widget.postave.domaci.length; x++) ...[
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text("${widget.postave.domaci[x]}"),
+                ),
+              ],
+            ],
           ),
-        ],
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 16.0), // Adjust the left padding as needed
+          child: Column(
+            children: [
+              Text(
+                "${widget.postave.gostiIme}",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              for (int x = 0; x < widget.postave.gosti.length; x++) ...[
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text("${widget.postave.gosti[x]}"),
+                ),
+              ],
+            ],
+          ),
+        ),
       ],
     );
   }
 }
 
 class TabelaWidget extends StatefulWidget {
-  TabelaWidget({super.key});
+  SearchResult<TabelaResponse> tabelaResponse;
+  TabelaWidget({super.key, required this.tabelaResponse});
 
   @override
   State<TabelaWidget> createState() => _TabelaWidgetState();
 }
 
 class _TabelaWidgetState extends State<TabelaWidget> {
-  final List<LigaTabela> testData = [
-    LigaTabela(
-        column1: '1', column2: 'Zeljeznicar', column3: '12', column4: '28'),
-    LigaTabela(column1: '2', column2: 'Sarajevo', column3: '12', column4: '26'),
-    LigaTabela(column1: '3', column2: 'Mladost', column3: '12', column4: '25'),
-    LigaTabela(
-        column1: '4', column2: 'Rudar Kakanj', column3: '12', column4: '22'),
-    LigaTabela(column1: '5', column2: 'Velez', column3: '12', column4: '22'),
-  ];
+  @override
+  List<LigaTabela> tabela = [];
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    for (var i = 0; i < widget.tabelaResponse.result.length; i++) {
+      tabela.add(LigaTabela(
+        column1: '${i + 1}.',
+        column2: widget.tabelaResponse.result[i].nazivKluba,
+        column3: "5",
+        column4: widget.tabelaResponse.result[i].brojBodova.toString(),
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        children: [LIgaTableWidget(data: testData)],
+        children: [LIgaTableWidget(data: tabela)],
       ),
     );
   }

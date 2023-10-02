@@ -173,7 +173,10 @@ class _UtakmiceState extends State<Utakmice> {
                           ),
                         ),
                       ),
-                      PreviewUtakmice(utakmice: utakmice)
+                      PreviewUtakmice(
+                        utakmice: utakmice,
+                        ligaId: ligaValue != null ? ligaValue!.ligaId1 ?? 0 : 0,
+                      )
                     ],
                   )
                 ],
@@ -188,7 +191,8 @@ class _UtakmiceState extends State<Utakmice> {
 
 class PreviewUtakmice extends StatelessWidget {
   List<UtakmiceResponse> utakmice;
-  PreviewUtakmice({super.key, required this.utakmice});
+  int ligaId;
+  PreviewUtakmice({super.key, required this.utakmice, required this.ligaId});
 
   @override
   Widget build(BuildContext context) {
@@ -212,9 +216,10 @@ class PreviewUtakmice extends StatelessWidget {
                             ),
                             InkWell(
                               onTap: () {
+                                var matchId = item.matchId as int;
                                 Navigator.of(context).pushNamed(
                                     '/detalji-utakmice',
-                                    arguments: item.matchId);
+                                    arguments: [matchId, ligaId]);
                               },
                               child: Padding(
                                   padding: const EdgeInsets.only(left: 10),
