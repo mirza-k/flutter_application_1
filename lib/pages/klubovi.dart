@@ -1,28 +1,50 @@
 // ignore_for_file: prefer_const_constructors, unnecessary_new, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/models/klubovi.dart';
-
-import '../components/dropdown_button_widget.dart';
+import 'package:flutter_application_1/models/response/matches_by_klub_response.dart';
+import 'package:flutter_application_1/models/response/sezona_response.dart';
+import 'package:flutter_application_1/providers/match_provider.dart';
+import 'package:flutter_application_1/providers/sezona_provider.dart';
+import 'package:provider/provider.dart';
 import '../components/navigation_button.dart';
+import '../models/response/klub_response.dart';
+import '../providers/klub_provider.dart';
 
 class Klubovi extends StatefulWidget {
   const Klubovi({super.key});
-
   @override
   State<Klubovi> createState() => _KluboviState();
 }
 
 class _KluboviState extends State<Klubovi> {
-  List<String> listaKlubova = ["Klub 1", "Klub 2", "Klub 3"];
+  KlubResponse? klubValue;
+  List<KlubResponse> klubResults = [];
   int _selectedIndex = 0;
+  List<Widget> _pages = [];
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  final List<Widget> _pages = [TrenutnaSezona(), HistorijaSezona()];
+  Future<void> _fetchKlubovi() async {
+    var _klubProvider = context.read<KlubProvider>();
+    var result = await _klubProvider.getAll();
+    setState(() {
+      klubResults = result.result;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchKlubovi();
+    _pages = [
+      TrenutnaSezona(
+        klubId: klubValue != null ? klubValue!.klubId ?? 0 : 0,
+      ),
+      HistorijaSezona(klubId: klubValue != null ? klubValue!.klubId ?? 0 : 0)
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +57,50 @@ class _KluboviState extends State<Klubovi> {
             child: Column(
               children: [
                 Text(
-                  "Izaberite klub",
-                  style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+                  "Odaberi klub",
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                 ),
-                DropdownButtonExample(list: listaKlubova),
+                Container(
+                  width: 300,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.grey,
+                      width: 2,
+                    ),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: DropdownButton<KlubResponse>(
+                    isExpanded: true,
+                    value: klubValue,
+                    onChanged: (val) {
+                      setState(() => klubValue = val!);
+                      _pages[0] = TrenutnaSezona(
+                        klubId: klubValue != null ? klubValue!.klubId ?? 0 : 0,
+                      );
+                      _pages[1] = HistorijaSezona(
+                          klubId:
+                              klubValue != null ? klubValue!.klubId ?? 0 : 0);
+                    },
+                    items: klubResults
+                        .map((val) => DropdownMenuItem(
+                            value: val, child: Text(val.naziv ?? "")))
+                        .toList(),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: Colors.grey,
+                      size: 24,
+                    ),
+                    underline: SizedBox(),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 50.0),
                   child: Row(
@@ -69,20 +131,41 @@ class _KluboviState extends State<Klubovi> {
   }
 }
 
-class TrenutnaSezona extends StatelessWidget {
-  TrenutnaSezona({super.key});
-  TrenutnaSezonaVM data = new TrenutnaSezonaVM(33, 23, [
-    "Klub1 3-3 Klub2",
-    "Klub3 4-4 Klub4",
-    "Klub1 3-3 Klub2",
-    "Klub3 4-4 Klub4",
-    "Klub1 3-3 Klub2",
-    "Klub3 4-4 Klub4",
-    "Klub1 3-3 Klub2",
-    "Klub3 4-4 Klub4",
-    "Klub1 3-3 Klub2",
-    "Klub3 4-4 Klub4",
-  ]);
+class TrenutnaSezona extends StatefulWidget {
+  int klubId;
+  TrenutnaSezona({super.key, required this.klubId});
+
+  @override
+  State<TrenutnaSezona> createState() => _TrenutnaSezonaState();
+}
+
+class _TrenutnaSezonaState extends State<TrenutnaSezona> {
+  MatchesByKlubResponse? result;
+
+  _fetchMatches() async {
+    var _matchProvider = context.read<MatchProvider>();
+    if (widget.klubId > 0) {
+      var response = await _matchProvider.getAllMatchesByKlubId(widget.klubId);
+      setState(() {
+        result = response;
+      });
+    }
+  }
+
+  @override
+  void didUpdateWidget(TrenutnaSezona oldWidget) {
+    if (widget.klubId != oldWidget.klubId) {
+      // The klubId has changed, perform your action here
+      _fetchMatches();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMatches();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,29 +174,29 @@ class TrenutnaSezona extends StatelessWidget {
       child: Container(
         child: Column(children: [
           Text(
-            'Broj datih golova: ${data.brojGolova}',
+            'Broj datih golova: ${result != null ? result!.brojDatihGolova ?? 0 : 0}',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           Text(
-            'Broj primljenih golova: ${data.brojPrimljenihGolova}',
+            'Broj primljenih golova: ${result != null ? result!.brojPrimljenihGolova ?? 0 : 0}',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Column(
               children: [
-                ...data.KlubUtakmice.map((item) {
-                  return Center(
-                    child: Column(
+                if (result?.rezultati != null)
+                  ...result!.rezultati.map((item) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "${item}",
                           style: TextStyle(fontSize: 18),
                         ),
                       ],
-                    ),
-                  );
-                })
+                    );
+                  })
               ],
             ),
           )
@@ -124,7 +207,8 @@ class TrenutnaSezona extends StatelessWidget {
 }
 
 class HistorijaSezona extends StatefulWidget {
-  HistorijaSezona({super.key});
+  int klubId;
+  HistorijaSezona({super.key, required this.klubId});
 
   @override
   State<HistorijaSezona> createState() => _HistorijaSezonaState();
@@ -132,24 +216,46 @@ class HistorijaSezona extends StatefulWidget {
 
 class _HistorijaSezonaState extends State<HistorijaSezona> {
   @override
+  SezonaResponse? sezonaValue;
+  List<SezonaResponse> sezonaResult = [];
+  MatchesByKlubResponse? result;
 
-  List<String> ListaSezona = [
-    "2022/2023",
-    "2021/2022",
-    "2020/2021"
-  ];
-TrenutnaSezonaVM data = new TrenutnaSezonaVM(44, 23, [
-    "Klub1 0-0 Klub2",
-    "Klub3 1-1 Klub4",
-    "Klub1 0-3 Klub2",
-    "Klub3 0-0 Klub4",
-    "Klub1 0-1 Klub2",
-    "Klub3 0-2 Klub4",
-    "Klub1 3-4 Klub2",
-    "Klub3 0-7 Klub4",
-    "Klub1 0-6 Klub2",
-    "Klub3 4-4 Klub4"
-  ]);
+  _fetchMatches() async {
+    var _matchProvider = context.read<MatchProvider>();
+    if (widget.klubId > 0 && sezonaValue != null) {
+      var sezonaId = sezonaValue!.sezonaId;
+      if (sezonaId != null && sezonaId != 0) {
+        var response =
+            await _matchProvider.getByKlubAndSezona(widget.klubId, sezonaId);
+        setState(() {
+          result = response;
+        });
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(HistorijaSezona oldWidget) {
+    if (widget.klubId != oldWidget.klubId) {
+      _fetchMatches();
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  _fetchSezona() async {
+    var _sezonaProvider = context.read<SezonaProvider>();
+    var response = await _sezonaProvider.get();
+    setState(() {
+      sezonaResult = response.result;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSezona();
+    _fetchMatches();
+  }
 
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -158,34 +264,70 @@ TrenutnaSezonaVM data = new TrenutnaSezonaVM(44, 23, [
           "Izaberite sezonu",
           style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
         ),
-        DropdownButtonExample(list: ListaSezona),
+        Container(
+          width: 300,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.grey,
+              width: 2,
+            ),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: DropdownButton<SezonaResponse>(
+            isExpanded: true,
+            value: sezonaValue,
+            onChanged: (val) {
+              setState(() => sezonaValue = val!);
+              _fetchMatches();
+            },
+            items: sezonaResult
+                .map((val) =>
+                    DropdownMenuItem(value: val, child: Text(val.naziv ?? "")))
+                .toList(),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            icon: const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: Colors.grey,
+              size: 24,
+            ),
+            underline: SizedBox(),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Column(children: [
             Text(
-              'Broj datih golova: ${data.brojGolova}',
+              'Broj datih golova: ${result != null ? result!.brojDatihGolova ?? 0 : 0}',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(
-              'Broj primljenih golova: ${data.brojPrimljenihGolova}',
+              'Broj primljenih golova: ${result != null ? result!.brojPrimljenihGolova ?? 0 : 0}',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Column(
                 children: [
-                  ...data.KlubUtakmice.map((item) {
-                    return Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            "${item}",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ],
-                      ),
-                    );
-                  })
+                  if (result?.rezultati != null)
+                    ...result!.rezultati.map((item) {
+                      return Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              "${item}",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      );
+                    })
                 ],
               ),
             )

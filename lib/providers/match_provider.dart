@@ -5,6 +5,7 @@ import 'package:flutter_application_1/models/response/match_details_response.dar
 import 'package:flutter_application_1/models/response/tabela_response.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/response/matches_by_klub_response.dart';
 import '../models/response/utakmica_response.dart';
 import '../models/search_results.dart';
 import '../utils/auth_utils.dart';
@@ -76,6 +77,38 @@ class MatchProvider with ChangeNotifier {
       for (var item in data) {
         result.result.add(TabelaResponse.fromJson(item));
       }
+      return result;
+    } else {
+      throw new Exception("Unexpected error");
+    }
+  }
+
+  Future<MatchesByKlubResponse> getAllMatchesByKlubId(int? klubId) async {
+    var url = "$_baseUrl$endpoint/All/$klubId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      var result = MatchesByKlubResponse(rezultati: []);
+      result = MatchesByKlubResponse.fromJson(data);
+      return result;
+    } else {
+      throw new Exception("Unexpected error");
+    }
+  }
+
+  Future<MatchesByKlubResponse> getByKlubAndSezona(
+      int? klubId, int? sezonaId) async {
+    var url =
+        "$_baseUrl$endpoint/AllBySezona?KlubId=$klubId&sezonaId=$sezonaId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      var result = MatchesByKlubResponse(rezultati: []);
+      result = MatchesByKlubResponse.fromJson(data);
       return result;
     } else {
       throw new Exception("Unexpected error");
