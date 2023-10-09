@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'package:flutter/material.dart';
+import '../models/response/match_strijelci_response.dart';
 
 class IgracAsistentTabela {
   final String column1;
@@ -14,13 +14,23 @@ class IgracAsistentTabela {
   });
 }
 
-class IgracAsistentWidget extends StatelessWidget {
-  final List<IgracAsistentTabela> data;
+class IgracAsistentWidget extends StatefulWidget {
+  List<MatchStrijelciResponse>? data;
   final String firstLabel;
   final String secondLabel;
 
-  const IgracAsistentWidget({Key? key, required this.data, required this.firstLabel, required this.secondLabel}) : super(key: key);
+  IgracAsistentWidget(
+      {Key? key,
+      required this.data,
+      required this.firstLabel,
+      required this.secondLabel})
+      : super(key: key);
 
+  @override
+  State<IgracAsistentWidget> createState() => _IgracAsistentWidgetState();
+}
+
+class _IgracAsistentWidgetState extends State<IgracAsistentWidget> {
   @override
   Widget build(BuildContext context) {
     return Table(
@@ -52,7 +62,7 @@ class IgracAsistentWidget extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
-                    firstLabel,
+                    widget.firstLabel,
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -63,7 +73,7 @@ class IgracAsistentWidget extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    secondLabel,
+                    widget.secondLabel,
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -71,36 +81,37 @@ class IgracAsistentWidget extends StatelessWidget {
             ),
           ],
         ),
-        ...data.map((item) {
-          return TableRow(
-            children: [
-              TableCell(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(item.column1),
+        if (widget.data != null)
+          ...widget.data!.map((item) {
+            return TableRow(
+              children: [
+                TableCell(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(1.toString()),
+                    ),
                   ),
                 ),
-              ),
-              TableCell(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(item.column2),
+                TableCell(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(item.nazivFudbalera),
+                    ),
                   ),
                 ),
-              ),
-              TableCell(
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(item.column3),
+                TableCell(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(item.brojGolova.toString()),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          );
-        }).toList(),
+              ],
+            );
+          }).toList(),
       ],
     );
   }

@@ -350,7 +350,7 @@ class _PostaveWidgetState extends State<PostaveWidget> {
       children: [
         Padding(
           padding: const EdgeInsets.only(
-              right: 16.0), // Adjust the right padding as needed
+              right: 16.0),
           child: Column(
             children: [
               Text(
@@ -368,7 +368,7 @@ class _PostaveWidgetState extends State<PostaveWidget> {
         ),
         Padding(
           padding: const EdgeInsets.only(
-              left: 16.0), // Adjust the left padding as needed
+              left: 16.0),
           child: Column(
             children: [
               Text(
@@ -401,7 +401,6 @@ class _TabelaWidgetState extends State<TabelaWidget> {
   @override
   List<LigaTabela> tabela = [];
   void initState() {
-    // TODO: implement initState
     super.initState();
     for (var i = 0; i < widget.tabelaResponse.result.length; i++) {
       tabela.add(LigaTabela(

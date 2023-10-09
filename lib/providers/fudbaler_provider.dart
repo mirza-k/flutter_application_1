@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/models/response/fudbaler_history_transfer_response.dart';
 import 'package:http/http.dart' as http;
 import '../models/response/fudbaler_detail_response.dart';
 import '../models/response/fudbaler_response.dart';
@@ -28,7 +29,7 @@ class FudbalerProvider with ChangeNotifier {
       }
       return result;
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
     }
   }
 
@@ -41,7 +42,7 @@ class FudbalerProvider with ChangeNotifier {
       var data = jsonDecode(response.body);
       return FudbalerResponse.fromJson(data);
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
     }
   }
 
@@ -54,7 +55,25 @@ class FudbalerProvider with ChangeNotifier {
       var data = jsonDecode(response.body);
       return FudbalerDetailResponse.fromJson(data);
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
+    }
+  }
+
+  Future<SearchResult<FudbalerHistoryTransferResponse>>
+      getFudbalerHistoryTransfer(int? fudbalerId) async {
+    var url = "$_baseUrl$endpoint/transferhistory/$fudbalerId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      var result = SearchResult<FudbalerHistoryTransferResponse>();
+      for (var item in data) {
+        result.result.add(FudbalerHistoryTransferResponse.fromJson(item));
+      }
+      return result;
+    } else {
+      throw Exception("Unexpected error");
     }
   }
 }

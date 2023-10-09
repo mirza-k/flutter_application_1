@@ -5,6 +5,7 @@ import 'package:flutter_application_1/pages/Utakmice.dart';
 import 'package:flutter_application_1/pages/igraci.dart';
 import 'package:flutter_application_1/pages/klubovi.dart';
 import 'package:flutter_application_1/pages/lige.dart';
+import 'package:flutter_application_1/pages/uredi_profil.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,7 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List pages = [Utakmice(), Klubovi(), Igraci(), Lige()];
+  List pages = [Utakmice(), Klubovi(), Igraci(), Lige(), UrediProfil()];
 
   int currentIndex = 0;
   void onTap(int index) {
@@ -44,10 +45,11 @@ class _HomeState extends State<Home> {
                   icon: Icon(Icons.sports), label: "Utakmice"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.sports_soccer), label: "Klubovi"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person), label: "Igrači"),
+              BottomNavigationBarItem(icon: Icon(Icons.man), label: "Igrači"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.table_chart_outlined), label: "Lige"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person), label: "Profil"),
             ]),
       ),
     );

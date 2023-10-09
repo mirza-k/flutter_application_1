@@ -1,26 +1,171 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/response/fudbaler_detail_response.dart';
 import 'package:flutter_application_1/models/response/fudbaler_response.dart';
 import 'package:flutter_application_1/providers/fudbaler_provider.dart';
 import 'package:provider/provider.dart';
+import '../models/response/fudbaler_history_transfer_response.dart';
 import '../models/response/klub_response.dart';
-import '../models/tabele.dart';
 import '../providers/klub_provider.dart';
 
-class HistorijaFudbalera extends StatelessWidget {
+class HistorijaFudbalera extends StatefulWidget {
   int fudbalerId;
   HistorijaFudbalera({super.key, required this.fudbalerId});
 
   @override
+  State<HistorijaFudbalera> createState() => _HistorijaFudbaleraState();
+}
+
+class _HistorijaFudbaleraState extends State<HistorijaFudbalera> {
+  List<FudbalerHistoryTransferResponse> transferHistoryResult = [];
+  Future<void> _fetchHistorijaTransfera() async {
+    if (widget.fudbalerId != 0) {
+      var fudbalerProvider = context.read<FudbalerProvider>();
+      var response =
+          await fudbalerProvider.getFudbalerHistoryTransfer(widget.fudbalerId);
+      setState(() {
+        transferHistoryResult = response.result;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchHistorijaTransfera();
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Historija fudbalera"),
       ),
       body: Column(
-        children: [Text("Historija fudbalera")],
+        children: [
+          Table(
+            border: TableBorder.all(),
+            columnWidths: const {
+              0: FlexColumnWidth(1),
+              1: FlexColumnWidth(2),
+              2: FlexColumnWidth(2),
+              3: FlexColumnWidth(2),
+              4: FlexColumnWidth(2)
+            },
+            children: [
+              TableRow(
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                ),
+                children: [
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Ime fudbalera',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          "Stari klub",
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Novi klub",
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Cijena",
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Ugovor",
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              ...transferHistoryResult.map((item) {
+                return TableRow(children: [
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(item.imeFudbalera),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(item.stariKlub),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(item.noviKlub),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(item.cijena),
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('${item.ugovor} godina/e'),
+                      ),
+                    ),
+                  ),
+                ]);
+              }).toList(),
+            ],
+          )
+        ],
       ),
     );
   }
@@ -34,15 +179,14 @@ class Igraci extends StatefulWidget {
 }
 
 class _IgraciState extends State<Igraci> {
-  @override
   KlubResponse? klubValue;
   List<KlubResponse> klubResults = [];
   FudbalerResponse? fudbalerValue;
   List<FudbalerResponse> fudbalerResult = [];
   FudbalerDetailResponse? fudbalerDetailResult;
   Future<void> _fetchKlubovi() async {
-    var _klubProvider = context.read<KlubProvider>();
-    var result = await _klubProvider.getAll();
+    var klubProvider = context.read<KlubProvider>();
+    var result = await klubProvider.getAll();
     setState(() {
       klubResults = result.result;
     });
@@ -54,8 +198,8 @@ class _IgraciState extends State<Igraci> {
     if (klubValue != null) {
       var klubId = klubValue!.klubId;
       if (klubId != null && klubId != 0) {
-        var _fudbalerProvider = context.read<FudbalerProvider>();
-        var response = await _fudbalerProvider.get(klubId);
+        var fudbalerProvider = context.read<FudbalerProvider>();
+        var response = await fudbalerProvider.get(klubId);
         setState(() {
           fudbalerResult = response.result;
         });
@@ -67,78 +211,14 @@ class _IgraciState extends State<Igraci> {
     if (fudbalerValue != null) {
       var fudbalerId = fudbalerValue!.fudbalerId;
       if (fudbalerId != null && fudbalerId != 0) {
-        var _fudbalerProvider = context.read<FudbalerProvider>();
-        var response = await _fudbalerProvider.getDetails(fudbalerId);
+        var fudbalerProvider = context.read<FudbalerProvider>();
+        var response = await fudbalerProvider.getDetails(fudbalerId);
         setState(() {
           fudbalerDetailResult = response;
         });
       }
     }
   }
-
-  List<String> listaLiga = <String>['Premier Liga', 'Druga Liga'];
-  List<FudbalerStatistikaTable> testData = [
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '1',
-        column3: '0',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '1',
-        column3: '0',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '0',
-        column3: '1',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '0',
-        column3: '0',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '2',
-        column3: '1',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '1',
-        column3: '1',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '0',
-        column3: '0',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '0',
-        column3: '0',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '0',
-        column3: '0',
-        column4: '0',
-        column5: '0'),
-    FudbalerStatistikaTable(
-        column1: 'Zeljo 3-2 Sarajevo',
-        column2: '0',
-        column3: '0',
-        column4: '0',
-        column5: '0')
-  ];
 
   @override
   void initState() {
@@ -271,9 +351,11 @@ class _IgraciState extends State<Igraci> {
                           Text('Jaca noga: ${fudbalerValue!.jacaNoga}'),
                           InkWell(
                             onTap: () {
-                              Navigator.of(context).pushNamed(
-                                  '/historija-fudbalera',
-                                  arguments: 123);
+                              if (fudbalerValue != null) {
+                                Navigator.of(context).pushNamed(
+                                    '/historija-fudbalera',
+                                    arguments: fudbalerValue!.fudbalerId ?? 0);
+                              }
                             },
                             child: Text(
                               "Historija fudbalera",

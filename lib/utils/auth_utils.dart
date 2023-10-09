@@ -5,15 +5,16 @@ import 'package:http/http.dart';
 class Authorization {
   static String? username;
   static String? password;
+  static int? id = 3;
 }
 
 bool isValidResponse(Response response) {
   if (response.statusCode < 299) {
     return true;
   } else if (response.statusCode == 401) {
-    throw new Exception("Unauthorized");
+    throw Exception("Unauthorized");
   } else {
-    throw new Exception("Something bad happened please try again");
+    throw Exception("Something bad happened please try again");
   }
 }
 

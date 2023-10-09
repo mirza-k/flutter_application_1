@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 import 'package:flutter/material.dart';
+import '../models/response/match_forma_response.dart';
 
 class FormaTabela {
   final String column1;
@@ -13,11 +14,16 @@ class FormaTabela {
   });
 }
 
-class FormaTabelaWidget extends StatelessWidget {
-  final List<FormaTabela> data;
+class FormaTabelaWidget extends StatefulWidget {
+  int counter = 0;
+  final List<MatchFormaResponse> data;
+  FormaTabelaWidget({Key? key, required this.data}) : super(key: key);
 
-  const FormaTabelaWidget({Key? key, required this.data}) : super(key: key);
+  @override
+  State<FormaTabelaWidget> createState() => _FormaTabelaWidgetState();
+}
 
+class _FormaTabelaWidgetState extends State<FormaTabelaWidget> {
   @override
   Widget build(BuildContext context) {
     return Table(
@@ -68,13 +74,13 @@ class FormaTabelaWidget extends StatelessWidget {
             ),
           ],
         ),
-        ...data.map((item) {
+        ...widget.data.map((item) {
           return TableRow(children: [
             TableCell(
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(item.column1),
+                  child: Text((++widget.counter).toString()),
                 ),
               ),
             ),
@@ -82,39 +88,39 @@ class FormaTabelaWidget extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(item.column2),
+                  child: Text(item.klub),
                 ),
               ),
             ),
             TableCell(
                 child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: item.column3.map((value) {
-                          return Container(
-                            width: 20,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              color: value == 'P'
-                                  ? Colors.green
-                                  : value == 'N'
-                                      ? Colors.red
-                                      : Colors.yellow,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Center(
-                              child: Text(
-                                value,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          );
-                        }).toList()),
-                  ),
-                ))
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: item.forma.map((value) {
+                      return Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: value == 'P'
+                              ? Colors.green
+                              : value == 'N'
+                                  ? Colors.yellow
+                                  : Colors.red,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            value,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }).toList()),
+              ),
+            ))
           ]);
         }).toList(),
       ],

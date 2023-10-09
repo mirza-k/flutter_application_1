@@ -2,9 +2,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/response/match_details_response.dart';
+import 'package:flutter_application_1/models/response/match_forma_response.dart';
+import 'package:flutter_application_1/models/response/match_strijelci_response.dart';
 import 'package:flutter_application_1/models/response/tabela_response.dart';
 import 'package:http/http.dart' as http;
-
 import '../models/response/matches_by_klub_response.dart';
 import '../models/response/utakmica_response.dart';
 import '../models/search_results.dart';
@@ -28,7 +29,7 @@ class MatchProvider with ChangeNotifier {
         var result = jsonDecode(response.body);
         return result;
       } else {
-        throw new Exception("Unexpected error");
+        throw Exception("Unexpected error");
       }
     }
     return 0;
@@ -47,7 +48,7 @@ class MatchProvider with ChangeNotifier {
       }
       return result;
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
     }
   }
 
@@ -62,7 +63,7 @@ class MatchProvider with ChangeNotifier {
       result = MatchDetailsResponse.fromJson(data);
       return result;
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
     }
   }
 
@@ -79,7 +80,41 @@ class MatchProvider with ChangeNotifier {
       }
       return result;
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
+    }
+  }
+
+  Future<SearchResult<MatchStrijelciResponse>> getStrijelci(int? ligaId) async {
+    var url = "$_baseUrl$endpoint/Strijelci/$ligaId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      var result = SearchResult<MatchStrijelciResponse>();
+      for (var item in data) {
+        result.result.add(MatchStrijelciResponse.fromJson(item));
+      }
+      return result;
+    } else {
+      throw Exception("Unexpected error");
+    }
+  }
+
+  Future<SearchResult<MatchFormaResponse>> getForma(int? ligaId) async {
+    var url = "$_baseUrl$endpoint/Forma/$ligaId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      var result = SearchResult<MatchFormaResponse>();
+      for (var item in data) {
+        result.result.add(MatchFormaResponse.fromJson(item));
+      }
+      return result;
+    } else {
+      throw Exception("Unexpected error");
     }
   }
 
@@ -94,7 +129,7 @@ class MatchProvider with ChangeNotifier {
       result = MatchesByKlubResponse.fromJson(data);
       return result;
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
     }
   }
 
@@ -111,7 +146,7 @@ class MatchProvider with ChangeNotifier {
       result = MatchesByKlubResponse.fromJson(data);
       return result;
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
     }
   }
 }

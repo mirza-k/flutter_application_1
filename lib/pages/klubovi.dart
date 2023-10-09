@@ -19,6 +19,7 @@ class _KluboviState extends State<Klubovi> {
   KlubResponse? klubValue;
   List<KlubResponse> klubResults = [];
   int _selectedIndex = 0;
+  TextEditingController pretragaController = TextEditingController();
   List<Widget> _pages = [];
   void _onItemTapped(int index) {
     setState(() {
@@ -27,8 +28,9 @@ class _KluboviState extends State<Klubovi> {
   }
 
   Future<void> _fetchKlubovi() async {
+    klubValue = null;
     var _klubProvider = context.read<KlubProvider>();
-    var result = await _klubProvider.getAll();
+    var result = await _klubProvider.getByNaziv(pretragaController.text);
     setState(() {
       klubResults = result.result;
     });
@@ -51,6 +53,16 @@ class _KluboviState extends State<Klubovi> {
     return Scaffold(
         body: SingleChildScrollView(
       child: Column(children: [
+        TextFormField(
+          onChanged: (value) {
+            _fetchKlubovi();
+          },
+          controller: pretragaController,
+          decoration: const InputDecoration(
+              labelText: "Pretraga",
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.search)),
+        ),
         Center(
           child: Padding(
             padding: const EdgeInsets.only(top: 30.0),
@@ -173,14 +185,16 @@ class _TrenutnaSezonaState extends State<TrenutnaSezona> {
       padding: const EdgeInsets.only(top: 20),
       child: Container(
         child: Column(children: [
-          Text(
-            'Broj datih golova: ${result != null ? result!.brojDatihGolova ?? 0 : 0}',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Text(
-            'Broj primljenih golova: ${result != null ? result!.brojPrimljenihGolova ?? 0 : 0}',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          if (result?.rezultati != null && widget.klubId != 0)
+            Text(
+              'Broj datih golova: ${result != null ? result!.brojDatihGolova ?? 0 : 0}',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          if (result?.rezultati != null)
+            Text(
+              'Broj primljenih golova: ${result != null ? result!.brojPrimljenihGolova ?? 0 : 0}',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Column(
@@ -303,14 +317,16 @@ class _HistorijaSezonaState extends State<HistorijaSezona> {
         Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Column(children: [
-            Text(
-              'Broj datih golova: ${result != null ? result!.brojDatihGolova ?? 0 : 0}',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text(
-              'Broj primljenih golova: ${result != null ? result!.brojPrimljenihGolova ?? 0 : 0}',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+            if (result?.rezultati != null)
+              Text(
+                'Broj datih golova: ${result != null ? result!.brojDatihGolova ?? 0 : 0}',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            if (result?.rezultati != null)
+              Text(
+                'Broj primljenih golova: ${result != null ? result!.brojPrimljenihGolova ?? 0 : 0}',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: Column(

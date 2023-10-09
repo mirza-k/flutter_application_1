@@ -27,7 +27,24 @@ class KlubProvider with ChangeNotifier {
       }
       return result;
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
+    }
+  }
+
+  Future<SearchResult<KlubResponse>> getByNaziv(String naziv) async {
+    var url = "$_baseUrl$endpoint?Naziv=$naziv";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      var result = SearchResult<KlubResponse>();
+      for (var item in data) {
+        result.result.add(KlubResponse.fromJson(item));
+      }
+      return result;
+    } else {
+      throw Exception("Unexpected error");
     }
   }
 
@@ -41,7 +58,7 @@ class KlubProvider with ChangeNotifier {
       var result = KlubResponse.fromJson(data[0]);
       return result;
     } else {
-      throw new Exception("Unexpected error");
+      throw Exception("Unexpected error");
     }
   }
 }
