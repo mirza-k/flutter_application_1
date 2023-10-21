@@ -8,7 +8,7 @@ class AuthProvider with ChangeNotifier {
   static String endpoint = "Korisnik";
   AuthProvider() {
     _baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "https://localhost:44344/");
+        defaultValue: 'http://10.0.2.2:5001/');
   }
 
   Future<bool> register(dynamic request) async {

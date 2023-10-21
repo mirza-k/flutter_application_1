@@ -16,7 +16,7 @@ class MatchProvider with ChangeNotifier {
   static String endpoint = "Match";
   MatchProvider() {
     _baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "https://localhost:44344/");
+        defaultValue: "http://10.0.2.2:5001/");
   }
 
   Future<int> GetMaxBrojKola(int ligaId) async {

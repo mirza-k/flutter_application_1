@@ -11,7 +11,7 @@ class SezonaProvider with ChangeNotifier {
   static String endpoint = "Sezona";
   SezonaProvider() {
     _baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "https://localhost:44344/");
+        defaultValue: "http://10.0.2.2:5001/");
   }
 
   Future<SearchResult<SezonaResponse>> get() async {

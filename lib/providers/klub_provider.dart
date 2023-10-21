@@ -11,7 +11,7 @@ class KlubProvider with ChangeNotifier {
   static String endpoint = "Klub";
   KlubProvider() {
     _baseUrl = const String.fromEnvironment("baseUrl",
-        defaultValue: "https://localhost:44344/");
+        defaultValue: "http://10.0.2.2:5001/");
   }
 
   Future<SearchResult<KlubResponse>> getAll() async {
