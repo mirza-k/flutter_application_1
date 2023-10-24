@@ -4,6 +4,7 @@ import 'package:flutter_application_1/pages/detalji_utakmice.dart';
 import 'package:flutter_application_1/pages/home.dart';
 import 'package:flutter_application_1/pages/igraci.dart';
 import 'package:flutter_application_1/pages/login.dart';
+import 'package:flutter_application_1/pages/payment.dart';
 import 'package:flutter_application_1/pages/register.dart';
 
 class RouteGenerator {
@@ -15,6 +16,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Register());
       case '/login':
         return MaterialPageRoute(builder: (_) => Login());
+      case '/payment':
+        return MaterialPageRoute(builder: (_) => Payment());
       case '/home':
         return MaterialPageRoute(builder: (_) => Home());
       case '/detalji-utakmice':

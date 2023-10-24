@@ -7,10 +7,13 @@ import 'package:flutter_application_1/providers/liga_provider.dart';
 import 'package:flutter_application_1/providers/match_provider.dart';
 import 'package:flutter_application_1/providers/sezona_provider.dart';
 import 'package:flutter_application_1/route_generator.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey =
+      "pk_test_51O0THdG4y19tAglhiVRezsCQlaQg3kdfAWWopu8Jy65RMdQTMwXuHcEMABcLbpSSnwNCp7nBq3ZkHX3IaAQsKnux00yTjNEah4";
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => AuthProvider()),
@@ -34,7 +37,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      initialRoute: '/home',
+      initialRoute: '/payment',
       debugShowCheckedModeBanner: false,
       onGenerateRoute: RouteGenerator.generateRoute,
     );
