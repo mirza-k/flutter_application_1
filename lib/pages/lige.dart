@@ -77,8 +77,8 @@ class _LigeState extends State<Lige> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    return SingleChildScrollView(
+      child: Column(
         children: [
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.0),

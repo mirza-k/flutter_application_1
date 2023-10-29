@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 class Authorization {
-  static String? username;
-  static String? password;
+  static String? username = "mirza";
+  static String? password = "mirza";
   static int? id = 3;
 }
 

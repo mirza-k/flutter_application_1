@@ -445,7 +445,7 @@ class _DogadjajUtakmiceWidgetState extends State<DogadjajUtakmiceWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 60, right: 60),
+      padding: const EdgeInsets.only(left: 15, right: 15),
       child: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: Row(

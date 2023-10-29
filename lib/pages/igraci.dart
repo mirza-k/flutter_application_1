@@ -40,132 +40,135 @@ class _HistorijaFudbaleraState extends State<HistorijaFudbalera> {
       appBar: AppBar(
         title: Text("Historija fudbalera"),
       ),
-      body: Column(
-        children: [
-          Table(
-            border: TableBorder.all(),
-            columnWidths: const {
-              0: FlexColumnWidth(1),
-              1: FlexColumnWidth(2),
-              2: FlexColumnWidth(2),
-              3: FlexColumnWidth(2),
-              4: FlexColumnWidth(2)
-            },
-            children: [
-              TableRow(
-                decoration: BoxDecoration(
-                  color: Colors.grey,
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            Table(
+              border: TableBorder.all(),
+              columnWidths: const {
+                0: FlexColumnWidth(1),
+                1: FlexColumnWidth(1),
+                2: FlexColumnWidth(1),
+                3: FlexColumnWidth(1),
+                4: FlexColumnWidth(1)
+              },
+              children: [
+                TableRow(
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                  ),
+                  children: [
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Fudbaler',
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Stari klub",
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Novi klub",
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Cijena",
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Ugovor",
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                children: [
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Ime fudbalera',
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
+                ...transferHistoryResult.map((item) {
+                  return TableRow(children: [
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(item.imeFudbalera),
                         ),
                       ),
                     ),
-                  ),
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text(
-                          "Stari klub",
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(item.stariKlub),
                         ),
                       ),
                     ),
-                  ),
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Novi klub",
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(item.noviKlub),
                         ),
                       ),
                     ),
-                  ),
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Cijena",
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(item.cijena),
                         ),
                       ),
                     ),
-                  ),
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Ugovor",
-                          style: TextStyle(
-                              fontSize: 17, fontWeight: FontWeight.bold),
+                    TableCell(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('${item.ugovor} godina/e'),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              ...transferHistoryResult.map((item) {
-                return TableRow(children: [
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(item.imeFudbalera),
-                      ),
-                    ),
-                  ),
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(item.stariKlub),
-                      ),
-                    ),
-                  ),
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(item.noviKlub),
-                      ),
-                    ),
-                  ),
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(item.cijena),
-                      ),
-                    ),
-                  ),
-                  TableCell(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text('${item.ugovor} godina/e'),
-                      ),
-                    ),
-                  ),
-                ]);
-              }).toList(),
-            ],
-          )
-        ],
+                  ]);
+                }).toList(),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -195,6 +198,7 @@ class _IgraciState extends State<Igraci> {
   Future<void> _fetchFudbaleri() async {
     fudbalerValue = null;
     fudbalerDetailResult = null;
+    fudbalerResult = [];
     if (klubValue != null) {
       var klubId = klubValue!.klubId;
       if (klubId != null && klubId != 0) {
