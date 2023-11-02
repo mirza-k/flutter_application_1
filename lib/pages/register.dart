@@ -93,79 +93,96 @@ class _RegisterState extends State<Register> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 30.0),
               ),
-              TextFormField(
-                controller: imeController,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                    labelText: "Ime",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email)),
-                validator: (value) {
-                  if (value!.isEmpty) return "Unesite Vaše ime";
-                  if (imeController.text.length < 5)
-                    return "Ime mora biti duže od 5 slova";
-                },
+              Container(
+                width: 320,
+                height: 60,
+                child: TextFormField(
+                  controller: imeController,
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                      labelText: "Ime",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email)),
+                  validator: (value) {
+                    if (value!.isEmpty) return "Unesite Vaše ime";
+                    if (imeController.text.length < 5)
+                      return "Ime mora biti duže od 5 slova";
+                  },
+                ),
               ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: prezimeController,
-                keyboardType: TextInputType.text,
-                decoration: const InputDecoration(
-                    labelText: "Prezime",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email)),
-                validator: (value) {
-                  if (value!.isEmpty) return "Unesite Vaše prezime";
-                  if (prezimeController.text.length < 5)
-                    return "Prezime mora biti duže od 5 slova";
-                },
+              SizedBox(height: 10),
+              Container(
+                width: 320,
+                height: 60,
+                child: TextFormField(
+                  controller: prezimeController,
+                  keyboardType: TextInputType.text,
+                  decoration: const InputDecoration(
+                      labelText: "Prezime",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email)),
+                  validator: (value) {
+                    if (value!.isEmpty) return "Unesite Vaše prezime";
+                    if (prezimeController.text.length < 5)
+                      return "Prezime mora biti duže od 5 slova";
+                  },
+                ),
               ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                    labelText: "Email",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email)),
-                validator: (value) {
-                  if (value!.isEmpty) return "Unesite Vaš email";
-                  bool emailValid = RegExp(
-                          r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                      .hasMatch(value);
-                  if (!emailValid) return "Unesite validan email";
-                },
+              SizedBox(height: 10),
+              Container(
+                width: 320,
+                height: 60,
+                child: TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                      labelText: "Email",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email)),
+                  validator: (value) {
+                    if (value!.isEmpty) return "Unesite Vaš email";
+                    bool emailValid = RegExp(
+                            r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                        .hasMatch(value);
+                    if (!emailValid) return "Unesite validan email";
+                  },
+                ),
               ),
-              SizedBox(height: 20),
-              TextFormField(
-                controller: passController,
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: passToggle,
-                decoration: InputDecoration(
-                    labelText: "Password ",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock),
-                    suffix: InkWell(
-                      child: Icon(
-                          passToggle ? Icons.visibility : Icons.visibility_off),
-                      onTap: () {
-                        setState(() {
-                          passToggle = !passToggle;
-                        });
-                      },
-                    )),
-                validator: (value) {
-                  if (value!.isEmpty) return "Unesite Vaš password";
-                  bool passValid = RegExp(
-                          r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
-                      .hasMatch(value);
-                  if (!passValid) {
-                    return "Password mora sadržavati 8 karaktera, jedno veliko slovo, jedno malo slovo, jedan broj i jedan specijalni znak";
-                  }
-                },
+              SizedBox(height: 10),
+              Container(
+                width: 320,
+                height: 60,
+                child: TextFormField(
+                  controller: passController,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: passToggle,
+                  decoration: InputDecoration(
+                      labelText: "Password ",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock),
+                      suffix: InkWell(
+                        child: Icon(passToggle
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onTap: () {
+                          setState(() {
+                            passToggle = !passToggle;
+                          });
+                        },
+                      )),
+                  validator: (value) {
+                    if (value!.isEmpty) return "Unesite Vaš password";
+                    bool passValid = RegExp(
+                            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
+                        .hasMatch(value);
+                    if (!passValid) {
+                      return "Password mora sadržavati 8 karaktera, jedno veliko slovo, jedno malo slovo, jedan broj i jedan specijalni znak";
+                    }
+                  },
+                ),
               ),
               const SizedBox(
-                height: 40,
+                height: 30,
               ),
               InkWell(
                 onTap: () {

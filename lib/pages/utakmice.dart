@@ -62,128 +62,130 @@ class _UtakmiceState extends State<Utakmice> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 50.0),
-              child: Column(
-                children: [
-                  Text(
-                    "Odaberi ligu",
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                  ),
-                  Container(
-                    width: 300,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.grey,
-                        width: 2,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 50.0),
+                child: Column(
+                  children: [
+                    Text(
+                      "Odaberi ligu",
+                      style:
+                          TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      width: 300,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 2,
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: DropdownButton<LigaResponse>(
+                        isExpanded: true,
+                        value: ligaValue,
+                        onChanged: (val) {
+                          setState(() => ligaValue = val!);
+                          _fetchBrojKola();
+                        },
+                        items: ligaResults
+                            .map((val) => DropdownMenuItem(
+                                value: val, child: Text(val.naziv ?? "")))
+                            .toList(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Colors.grey,
+                          size: 24,
+                        ),
+                        underline: SizedBox(),
                       ),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: DropdownButton<LigaResponse>(
-                      isExpanded: true,
-                      value: ligaValue,
-                      onChanged: (val) {
-                        setState(() => ligaValue = val!);
-                        _fetchBrojKola();
-                      },
-                      items: ligaResults
-                          .map((val) => DropdownMenuItem(
-                              value: val, child: Text(val.naziv ?? "")))
-                          .toList(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      icon: const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: Colors.grey,
-                        size: 24,
-                      ),
-                      underline: SizedBox(),
+                    Padding(padding: EdgeInsets.only(top: 15.0)),
+                    Text(
+                      "Odaberi kolo",
+                      style:
+                          TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 15.0)),
-                  Text(
-                    "Odaberi kolo",
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                  ),
-                  Container(
-                    width: 300,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.grey,
-                        width: 2,
+                    Container(
+                      width: 300,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 2,
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: DropdownButton<int>(
+                        isExpanded: true,
+                        value: koloValue,
+                        onChanged: (val) async {
+                          setState(() => koloValue = val!);
+                          _fetchMatchevi();
+                        },
+                        items: koloResults
+                            .map((val) => DropdownMenuItem(
+                                value: val, child: Text(val.toString())))
+                            .toList(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          color: Colors.grey,
+                          size: 24,
+                        ),
+                        underline: SizedBox(),
                       ),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: DropdownButton<int>(
-                      isExpanded: true,
-                      value: koloValue,
-                      onChanged: (val) async {
-                        setState(() => koloValue = val!);
-                        _fetchMatchevi();
-                      },
-                      items: koloResults
-                          .map((val) => DropdownMenuItem(
-                              value: val, child: Text(val.toString())))
-                          .toList(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                      icon: const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: Colors.grey,
-                        size: 24,
-                      ),
-                      underline: SizedBox(),
-                    ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 50.0),
-                        child: Container(
-                          width: double.infinity,
-                          color: Colors.blue,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                              child: Text(
-                                "Premier Liga",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
+                    Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 50.0),
+                          child: Container(
+                            width: double.infinity,
+                            color: Colors.blue,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                  "Premier Liga",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      PreviewUtakmice(
-                        utakmice: utakmice,
-                        ligaId: ligaValue != null ? ligaValue!.ligaId1 ?? 0 : 0,
-                      )
-                    ],
-                  )
-                ],
+                        PreviewUtakmice(
+                          utakmice: utakmice,
+                          ligaId: ligaValue != null ? ligaValue!.ligaId1 ?? 0 : 0,
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     ));
   }

@@ -37,9 +37,10 @@ class KorisnikProvider with ChangeNotifier {
     var headers = createHeaders();
     var jsonRequest = jsonEncode(request);
     var response = await http.post(uri, headers: headers, body: jsonRequest);
-    if (isValidResponse(response))
+    if (isValidResponse(response)) {
+      Authorization.username = request.username;
       return 1;
-    else
+    } else
       return 0;
   }
 

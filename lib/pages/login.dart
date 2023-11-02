@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/request/login_request.dart';
+import 'package:flutter_application_1/utils/auth_utils.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
@@ -25,6 +26,9 @@ class _LoginState extends State<Login> {
     var request = LoginRequest().toJson(login);
     var result = await _authProvider.login(request);
     if (result > 0) {
+      Authorization.username = email;
+      Authorization.password = pass;
+      Authorization.id = result;
       Navigator.of(context).pushNamed('/home');
     } else {
       showDialog(
@@ -59,51 +63,60 @@ class _LoginState extends State<Login> {
                 ),
               ),
               Padding(padding: const EdgeInsets.only(top: 30)),
-              TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                    labelText: "Email",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.email)),
-                validator: (value) {
-                  if (value!.isEmpty) return "Unesite Vaš email";
-                  bool emailValid = RegExp(
-                          r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                      .hasMatch(value);
-                  if (!emailValid) return "Unesite validan email";
-                },
+              Container(
+                width: 320,
+                height: 55,
+                child: TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                      labelText: "Email",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.email)),
+                  validator: (value) {
+                    if (value!.isEmpty) return "Unesite Vaš email";
+                    bool emailValid = RegExp(
+                            r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                        .hasMatch(value);
+                    if (!emailValid) return "Unesite validan email";
+                  },
+                ),
               ),
               SizedBox(height: 20),
-              TextFormField(
-                controller: passController,
-                keyboardType: TextInputType.visiblePassword,
-                obscureText: passToggle,
-                decoration: InputDecoration(
-                    labelText: "Password ",
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock),
-                    suffix: InkWell(
-                      child: Icon(
-                          passToggle ? Icons.visibility : Icons.visibility_off),
-                      onTap: () {
-                        setState(() {
-                          passToggle = !passToggle;
-                        });
-                      },
-                    )),
-                validator: (value) {
-                  if (value!.isEmpty) return "Unesite Vaš password";
-                  bool passValid = RegExp(
-                          r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
-                      .hasMatch(value);
-                  if (!passValid) {
-                    return "Password mora sadržavati 8 karaktera, jedno veliko slovo, jedno malo slovo, jedan broj i jedan specijalni znak";
-                  }
-                },
+              Container(
+                width: 320,
+                height: 55,
+                child: TextFormField(
+                  controller: passController,
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: passToggle,
+                  decoration: InputDecoration(
+                      labelText: "Password ",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.lock),
+                      suffix: InkWell(
+                        child: Icon(passToggle
+                            ? Icons.visibility
+                            : Icons.visibility_off),
+                        onTap: () {
+                          setState(() {
+                            passToggle = !passToggle;
+                          });
+                        },
+                      )),
+                  validator: (value) {
+                    if (value!.isEmpty) return "Unesite Vaš password";
+                    bool passValid = RegExp(
+                            r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$")
+                        .hasMatch(value);
+                    if (!passValid) {
+                      return "Password mora sadržavati 8 karaktera, jedno veliko slovo, jedno malo slovo, jedan broj i jedan specijalni znak";
+                    }
+                  },
+                ),
               ),
               const SizedBox(
-                height: 40,
+                height: 10,
               ),
               InkWell(
                 onTap: () {
@@ -112,7 +125,7 @@ class _LoginState extends State<Login> {
                   }
                 },
                 child: Container(
-                  height: 50,
+                  height: 35,
                   decoration: BoxDecoration(
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(5),
@@ -140,7 +153,7 @@ class _LoginState extends State<Login> {
                       child: Text(
                         "Registruj se",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ))
                 ],
               ),

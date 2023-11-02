@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      initialRoute: '/home',
+      initialRoute: '/login',
       debugShowCheckedModeBanner: false,
       onGenerateRoute: RouteGenerator.generateRoute,
     );

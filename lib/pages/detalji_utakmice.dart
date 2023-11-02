@@ -158,91 +158,93 @@ class _DetaljiUtakmiceState extends State<DetaljiUtakmice> {
       appBar: AppBar(
         title: Text("Detalji utakmice"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 50),
-        child: Column(
-          children: [
-            Row(children: [
-              if (detalji != null)
-                Flexible(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 50),
+          child: Column(
+            children: [
+              Row(children: [
+                if (detalji != null)
+                  Flexible(
+                      flex: 3,
+                      fit: FlexFit.tight,
+                      child: Column(
+                        children: [
+                          if (detalji.domaciSlika != null)
+                            Image.memory(
+                              detalji.domaciSlika ??
+                                  Uint8List.fromList([10, 20, 30]),
+                              width: 150,
+                              height: 150,
+                            ),
+                          Text(detalji.domaci ?? "",
+                              style: TextStyle(fontSize: 20))
+                        ],
+                      )),
+                if (detalji != null)
+                  Flexible(
+                      flex: 1,
+                      fit: FlexFit.tight,
+                      child: Column(
+                        children: [
+                          Text(
+                            detalji.rezultat ?? "",
+                            style: TextStyle(fontSize: 25),
+                          ),
+                        ],
+                      )),
+                if (detalji != null)
+                  Flexible(
                     flex: 3,
                     fit: FlexFit.tight,
                     child: Column(
                       children: [
-                        if (detalji.domaciSlika != null)
+                        if (detalji.gostiSlika != null)
                           Image.memory(
-                            detalji.domaciSlika ??
+                            detalji.gostiSlika ??
                                 Uint8List.fromList([10, 20, 30]),
                             width: 150,
                             height: 150,
                           ),
-                        Text(detalji.domaci ?? "",
-                            style: TextStyle(fontSize: 20))
+                        Text(detalji.gosti ?? "", style: TextStyle(fontSize: 20))
                       ],
-                    )),
-              if (detalji != null)
-                Flexible(
-                    flex: 1,
-                    fit: FlexFit.tight,
-                    child: Column(
-                      children: [
-                        Text(
-                          detalji.rezultat ?? "",
-                          style: TextStyle(fontSize: 25),
-                        ),
-                      ],
-                    )),
-              if (detalji != null)
-                Flexible(
-                  flex: 3,
-                  fit: FlexFit.tight,
-                  child: Column(
-                    children: [
-                      if (detalji.gostiSlika != null)
-                        Image.memory(
-                          detalji.gostiSlika ??
-                              Uint8List.fromList([10, 20, 30]),
-                          width: 150,
-                          height: 150,
-                        ),
-                      Text(detalji.gosti ?? "", style: TextStyle(fontSize: 20))
-                    ],
+                    ),
                   ),
+              ]),
+              Padding(
+                padding: const EdgeInsets.only(top: 50.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    NavigationButton(
+                      title: 'Detalji',
+                      isSelected: _selectedIndex == 0,
+                      onTap: () => _onItemTapped(0),
+                    ),
+                    NavigationButton(
+                      title: 'Postave',
+                      isSelected: _selectedIndex == 1,
+                      onTap: () => _onItemTapped(1),
+                    ),
+                    NavigationButton(
+                      title: 'Statistika',
+                      isSelected: _selectedIndex == 2,
+                      onTap: () => _onItemTapped(2),
+                    ),
+                    NavigationButton(
+                      title: 'Tabela',
+                      isSelected: _selectedIndex == 3,
+                      onTap: () => _onItemTapped(3),
+                    )
+                  ],
                 ),
-            ]),
-            Padding(
-              padding: const EdgeInsets.only(top: 50.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  NavigationButton(
-                    title: 'Detalji',
-                    isSelected: _selectedIndex == 0,
-                    onTap: () => _onItemTapped(0),
-                  ),
-                  NavigationButton(
-                    title: 'Postave',
-                    isSelected: _selectedIndex == 1,
-                    onTap: () => _onItemTapped(1),
-                  ),
-                  NavigationButton(
-                    title: 'Statistika',
-                    isSelected: _selectedIndex == 2,
-                    onTap: () => _onItemTapped(2),
-                  ),
-                  NavigationButton(
-                    title: 'Tabela',
-                    isSelected: _selectedIndex == 3,
-                    onTap: () => _onItemTapped(3),
-                  )
-                ],
               ),
-            ),
-            if (_pages.isNotEmpty)
-              Column(
-                children: [_pages[_selectedIndex]],
-              )
-          ],
+              if (_pages.isNotEmpty)
+                Column(
+                  children: [_pages[_selectedIndex]],
+                )
+            ],
+          ),
         ),
       ),
     );

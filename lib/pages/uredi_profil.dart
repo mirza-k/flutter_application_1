@@ -15,7 +15,8 @@ class UrediProfilState extends State<UrediProfil> {
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _imeController = TextEditingController();
   TextEditingController _prezimeController = TextEditingController();
-  // DateTime? _selectedDate;
+  final _formKey = GlobalKey<FormState>();
+  bool _isButtonEnabled = false;
   KorisnikResponse? result;
 
   Future<void> _fetchKorisnik() async {
@@ -41,100 +42,75 @@ class UrediProfilState extends State<UrediProfil> {
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 250,
-                child: Text(
-                  "Uredi profil",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+          child: Form(
+            key: _formKey,
+            onChanged: () {
+              setState(() {
+                _isButtonEnabled = _formKey.currentState!.validate();
+              });
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 250,
+                  child: Text(
+                    "Uredi profil",
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-              SizedBox(height: 20.0),
-              Container(
-                width: 250,
-                child: TextFormField(
-                  controller: _imeController,
-                  decoration: InputDecoration(labelText: 'Ime'),
+                SizedBox(height: 20.0),
+                Container(
+                  width: 250,
+                  child: TextFormField(
+                    controller: _imeController,
+                    decoration: InputDecoration(labelText: 'Ime'),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Ime je obavezno polje';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
-              ),
-              Container(
-                width: 250,
-                child: TextFormField(
-                  controller: _prezimeController,
-                  decoration: InputDecoration(labelText: 'Prezime'),
+                Container(
+                  width: 250,
+                  child: TextFormField(
+                    controller: _prezimeController,
+                    decoration: InputDecoration(labelText: 'Prezime'),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Prezime je obavezno polje';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
-              ),
-              Container(
-                width: 250,
-                child: TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(labelText: 'Username'),
+                Container(
+                  width: 250,
+                  child: TextFormField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(labelText: 'Username'),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Username je obavezno polje';
+                      }
+                      bool emailValid = RegExp(
+                              r'^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                          .hasMatch(value);
+                      if (!emailValid) return "Unesite validan email";
+                      return null;
+                    },
+                  ),
                 ),
-              ),
-              SizedBox(height: 20.0),
-              // Container(
-              //   child: ElevatedButton(
-              //     onPressed: () async {
-              //       final _datePickedDate = await showDatePicker(
-              //         context: context,
-              //         initialDate: DateTime.now(),
-              //         firstDate: DateTime(1900),
-              //         lastDate: DateTime.now(),
-              //       );
-
-              //       if (_datePickedDate != null) {
-              //         setState(() {
-              //           _selectedDate = DateTime(
-              //             _datePickedDate.year,
-              //             _datePickedDate.month,
-              //             _datePickedDate.day,
-              //           );
-              //         });
-              //       }
-              //     },
-              //     child: Text(
-              //       'Datum rodjenja',
-              //       style: TextStyle(
-              //         fontFamily: 'Readex Pro',
-              //         color: Colors.white,
-              //       ),
-              //     ),
-              //     style: ElevatedButton.styleFrom(
-              //       padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-              //       elevation: 3,
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(8),
-              //       ),
-              //       primary: Theme.of(context).primaryColor,
-              //       textStyle: Theme.of(context).textTheme.headline6!.copyWith(
-              //             fontFamily: 'Readex Pro',
-              //             color: Colors.white,
-              //           ),
-              //     ),
-              //   ),
-              // ),
-              // Padding(
-              //   padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-              //   child: Text(
-              //     _selectedDate != null
-              //         ? DateFormat('yyyy-MM-dd')
-              //             .format(_selectedDate ?? DateTime.now())
-              //         : 'Izaberi datum',
-              //     style: const TextStyle(
-              //       fontFamily: 'Readex Pro',
-              //       fontSize: 24,
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(height: 50.0),
-              ElevatedButton(
-                onPressed: _saveProfile,
-                child: const Text('Spasi'),
-              ),
-            ],
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: _isButtonEnabled ? _saveProfile : null,
+                  child: const Text('Spasi'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -143,10 +119,12 @@ class UrediProfilState extends State<UrediProfil> {
 
   void _saveProfile() async {
     var request = UrediKorisnikaRequest(
-        korisnikId: Authorization.id ?? 0,
-        username: _usernameController.text,
-        ime: _imeController.text,
-        prezime: _prezimeController.text);
+      korisnikId: Authorization.id ?? 0,
+      username: _usernameController.text,
+      ime: _imeController.text,
+      prezime: _prezimeController.text,
+    );
+    print(Authorization.id);
     var korisnikProvider = context.read<KorisnikProvider>();
     var response = await korisnikProvider.urediKorisnika(request);
   }
