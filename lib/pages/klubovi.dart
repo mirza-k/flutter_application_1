@@ -201,14 +201,17 @@ class _TrenutnaSezonaState extends State<TrenutnaSezona> {
               children: [
                 if (result?.rezultati != null)
                   ...result!.rezultati.map((item) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "${item}",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      ],
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${item}",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
                     );
                   })
               ],
@@ -334,13 +337,17 @@ class _HistorijaSezonaState extends State<HistorijaSezona> {
                   if (result?.rezultati != null)
                     ...result!.rezultati.map((item) {
                       return Center(
-                        child: Column(
-                          children: [
-                            Text(
-                              "${item}",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ],
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${item}",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     })

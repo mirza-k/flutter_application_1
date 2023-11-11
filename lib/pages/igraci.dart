@@ -500,7 +500,7 @@ class _IgraciState extends State<Igraci> {
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.zutiKartoni.toString()),
+                            child: Text(item.crveniKartoni.toString()),
                           ),
                         ),
                       ),
@@ -508,7 +508,7 @@ class _IgraciState extends State<Igraci> {
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(item.crveniKartoni.toString()),
+                            child: Text(item.zutiKartoni.toString()),
                           ),
                         ),
                       ),

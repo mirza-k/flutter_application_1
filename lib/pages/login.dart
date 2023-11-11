@@ -22,7 +22,7 @@ class _LoginState extends State<Login> {
 
   void login(String email, String pass) async {
     _authProvider = context.read<AuthProvider>();
-    var login = LoginRequest(username: email, password: pass);
+    var login = LoginRequest(username: email, password: pass, adminPage: false);
     var request = LoginRequest().toJson(login);
     var result = await _authProvider.login(request);
     if (result > 0) {

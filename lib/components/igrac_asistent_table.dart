@@ -31,6 +31,7 @@ class IgracAsistentWidget extends StatefulWidget {
 }
 
 class _IgracAsistentWidgetState extends State<IgracAsistentWidget> {
+  int brojac = 0;
   @override
   Widget build(BuildContext context) {
     return Table(
@@ -89,7 +90,7 @@ class _IgracAsistentWidgetState extends State<IgracAsistentWidget> {
                   child: Center(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(1.toString()),
+                      child: Text((++brojac).toString()),
                     ),
                   ),
                 ),
