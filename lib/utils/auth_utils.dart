@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart';
 
 class Authorization {
-  static String? username = "mirza";
-  static String? password = "mirza";
+  static String? username = "";
+  static String? password = "";
   static int? id = 3;
 }
 
@@ -19,8 +19,8 @@ bool isValidResponse(Response response) {
 }
 
 Map<String, String> createHeaders() {
-  String username = Authorization.username ?? "mirza";
-  String pass = Authorization.password ?? "mirza";
+  String username = Authorization.username ?? "";
+  String pass = Authorization.password ?? "";
   String basicAuth = "Basic ${base64Encode(utf8.encode('$username:$pass'))}";
 
   var headers = {

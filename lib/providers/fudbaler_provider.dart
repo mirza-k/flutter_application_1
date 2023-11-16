@@ -76,4 +76,46 @@ class FudbalerProvider with ChangeNotifier {
       throw Exception("Unexpected error");
     }
   }
+
+  Future<SearchResult<FudbalerResponse>> getSlicneFudbalere(
+      int? fudbalerId) async {
+    var url = "$_baseUrl$endpoint/recommended/$fudbalerId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var data = jsonDecode(response.body);
+      var result = SearchResult<FudbalerResponse>();
+      for (var item in data) {
+        result.result.add(FudbalerResponse.fromJson(item));
+      }
+      return result;
+    } else {
+      throw Exception("Unexpected error");
+    }
+  }
+
+  Future<int> ocijeniFudbalera(dynamic request) async {
+    var url = "$_baseUrl$endpoint/OmiljeniFudbaler";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var jsonRequest = jsonEncode(request);
+    var response = await http.post(uri, headers: headers, body: jsonRequest);
+    if (isValidResponse(response)) {
+      return 1;
+    } else
+      return 0;
+  }
+
+  Future<int> getRating(int? fudbalerId, int? korisnikId) async {
+    var url = "$_baseUrl$endpoint/getRating/$fudbalerId/$korisnikId";
+    var uri = Uri.parse(url);
+    var headers = createHeaders();
+    var response = await http.get(uri, headers: headers);
+    if (isValidResponse(response)) {
+      var result = jsonDecode(response.body);
+      return result;
+    } else
+      return 0;
+  }
 }
